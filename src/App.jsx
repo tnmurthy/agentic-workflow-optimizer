@@ -13,6 +13,7 @@ import ScenarioBuilder from './components/ScenarioBuilder';
 import BenchmarkMode from './components/BenchmarkMode';
 import Gamification from './components/Gamification';
 import AboutModal from './components/AboutModal';
+import ProjectInfo from './components/ProjectInfo';
 import { defaultPricing } from './data/workflowData';
 
 function App() {
@@ -117,6 +118,9 @@ function App() {
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
                 <ProjectionCharts pricePerThousand={pricePerThousand} />
             </div>
+
+            {/* Project Info - NEW */}
+            <ProjectInfo />
 
             {/* Footer */}
             <footer style={{
