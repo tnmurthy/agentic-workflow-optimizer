@@ -24,7 +24,7 @@ Both commands should display version numbers.
 ## Step 3: Navigate to Project Directory
 
 ```bash
-cd "C:\Users\Sreepadma Vankadara\.gemini\antigravity\scratch\agentic-workflow-optimizer"
+cd "C:\Users\Sreepadma Vankadara\.gemini\antigravity\scratch\token-kalc"
 ```
 
 ## Step 4: Install Project Dependencies
@@ -74,7 +74,7 @@ pnpm dev
 ## Quick Start (After Node.js is Installed)
 
 ```bash
-cd "C:\Users\Sreepadma Vankadara\.gemini\antigravity\scratch\agentic-workflow-optimizer"
+cd "C:\Users\Sreepadma Vankadara\.gemini\antigravity\scratch\token-kalc"
 npm install
 npm run dev
 ```
