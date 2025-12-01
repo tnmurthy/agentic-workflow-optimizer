@@ -10,6 +10,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    Filler,
 } from 'chart.js';
 import { BarChart3, LineChart as LineChartIcon } from 'lucide-react';
 import { monolithicTokens, agenticTotalTokens } from '../data/workflowData';
@@ -23,7 +24,8 @@ ChartJS.register(
     PointElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 );
 
 const ProjectionCharts = ({ pricePerThousand }) => {
