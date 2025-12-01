@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Bar, Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -27,6 +28,55 @@ ChartJS.register(
     Legend,
     Filler
 );
+
+const ChartContainer = styled.div`
+    height: 400px;
+`;
+
+const Stat = styled.div`
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    text-align: center;
+`;
+
+const StatLabel = styled.p`
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+`;
+
+const StatValue = styled.p`
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--accent-success);
+    margin-bottom: 0.5rem;
+`;
+
+const StatUnit = styled.p`
+    font-size: 0.75rem;
+    margin-bottom: 0;
+`;
+
+const TotalSavings = styled.div`
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--gradient-success);
+    border-radius: var(--radius-md);
+    text-align: center;
+`;
+
+const TotalSavingsLabel = styled.h3`
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: white;
+`;
+
+const TotalSavingsValue = styled.p`
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 0;
+`;
 
 const ProjectionCharts = ({ pricePerThousand }) => {
     // Monthly projections at different scales
@@ -202,27 +252,22 @@ const ProjectionCharts = ({ pricePerThousand }) => {
                 </div>
 
                 <div className="card-body">
-                    <div style={{ height: '400px' }}>
+                    <ChartContainer>
                         <Bar data={monthlyData} options={barChartOptions} />
-                    </div>
+                    </ChartContainer>
 
                     {/* Stats Grid */}
                     <div className="grid grid-3 gap-md mt-lg">
                         {monthlyProjections.map((proj, idx) => (
-                            <div key={idx} style={{
-                                padding: 'var(--spacing-md)',
-                                background: 'var(--bg-tertiary)',
-                                borderRadius: 'var(--radius-md)',
-                                textAlign: 'center'
-                            }}>
-                                <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                            <Stat key={idx}>
+                                <StatLabel>
                                     {monthlyScales[idx].label}/month
-                                </p>
-                                <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--accent-success)', marginBottom: '0.5rem' }}>
+                                </StatLabel>
+                                <StatValue>
                                     {formatCurrency(proj.savings)}
-                                </p>
-                                <p style={{ fontSize: '0.75rem', marginBottom: 0 }}>saved per month</p>
-                            </div>
+                                </StatValue>
+                                <StatUnit>saved per month</StatUnit>
+                            </Stat>
                         ))}
                     </div>
                 </div>
@@ -241,25 +286,19 @@ const ProjectionCharts = ({ pricePerThousand }) => {
                 </div>
 
                 <div className="card-body">
-                    <div style={{ height: '400px' }}>
+                    <ChartContainer>
                         <Line data={multiYearChartData} options={lineChartOptions} />
-                    </div>
+                    </ChartContainer>
 
                     {/* 5-Year Total */}
-                    <div style={{
-                        marginTop: 'var(--spacing-lg)',
-                        padding: 'var(--spacing-lg)',
-                        background: 'var(--gradient-success)',
-                        borderRadius: 'var(--radius-md)',
-                        textAlign: 'center'
-                    }}>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'white' }}>
+                    <TotalSavings>
+                        <TotalSavingsLabel>
                             5-Year Total Savings
-                        </h3>
-                        <p style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: 0 }}>
+                        </TotalSavingsLabel>
+                        <TotalSavingsValue>
                             {formatCurrency(multiYearData[4].cumulativeSavings)}
-                        </p>
-                    </div>
+                        </TotalSavingsValue>
+                    </TotalSavings>
                 </div>
             </div>
         </div>

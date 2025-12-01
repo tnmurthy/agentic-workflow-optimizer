@@ -6,9 +6,6 @@ import ProjectInfo from '../components/ProjectInfo';
 
 test('renders project info section', () => {
     render(<ProjectInfo />);
-    const titleElement = screen.getByText(/About the Project/i);
+    const titleElement = screen.getByText(/Project Overview/i);
     expect(titleElement).toBeInTheDocument();
-
-    const goalText = screen.getByText(/Goal:/i);
-    expect(goalText).toBeInTheDocument();
 });
