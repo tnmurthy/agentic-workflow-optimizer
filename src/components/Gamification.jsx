@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Award, Star, TrendingUp, DollarSign } from 'lucide-react';
-import { formatNumber } from '../utils/calculations';
+import { formatNumber, formatCurrency } from '../utils/calculations';
 
 const achievementsList = [
     {
