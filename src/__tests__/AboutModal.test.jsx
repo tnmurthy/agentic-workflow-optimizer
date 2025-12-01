@@ -6,7 +6,7 @@ import AboutModal from '../components/AboutModal';
 
 test('renders about modal when open', () => {
     render(<AboutModal isOpen={true} />);
-    const titleElement = screen.getByText(/Project Documentation/i);
+    const titleElement = screen.getByText(/Agentic Workflow Token Optimizer/i);
     expect(titleElement).toBeInTheDocument();
 });
 
