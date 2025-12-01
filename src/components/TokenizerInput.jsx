@@ -1,8 +1,165 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { Sparkles, ArrowRight, Info } from 'lucide-react';
 import { encode } from 'gpt-tokenizer';
 import { agents, monolithicTokens } from '../data/workflowData';
 import { formatNumber } from '../utils/calculations';
+
+const TokenizerCard = styled.div`
+    .input-group {
+        textarea {
+            resize: vertical;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        p {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+
+            kbd {
+                padding: 0.2rem 0.4rem;
+                background: var(--bg-tertiary);
+                border-radius: 4px;
+            }
+        }
+    }
+
+    .examples {
+        margin-top: var(--spacing-md);
+
+        p {
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .flex {
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-size: 0.875rem;
+        }
+    }
+
+    .analyze-btn {
+        width: 100%;
+    }
+
+    .results {
+        margin-top: var(--spacing-lg);
+
+        .estimate-warning {
+            padding: var(--spacing-sm);
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--accent-warning);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+
+            p {
+                font-size: 0.875rem;
+                margin-bottom: 0;
+            }
+        }
+
+        .summary-cards {
+            .card-item {
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                text-align: center;
+
+                p:first-child {
+                    font-size: 0.875rem;
+                    margin-bottom: 0.5rem;
+                }
+
+                p:last-child {
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin-bottom: 0;
+
+                    @media (max-width: 480px) {
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+
+            .monolithic {
+                background: rgba(239, 68, 68, 0.1);
+                border: 2px solid var(--accent-danger);
+                p:last-child { color: var(--accent-danger); }
+            }
+
+            .agentic {
+                background: rgba(16, 185, 129, 0.1);
+                border: 2px solid var(--accent-success);
+                p:last-child { color: var(--accent-success); }
+            }
+
+            .saved {
+                background: var(--gradient-success);
+                p { color: white; }
+            }
+        }
+
+        .reduction-badge {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-lg);
+            background: var(--gradient-accent);
+            border-radius: var(--radius-md);
+            text-align: center;
+
+            h3 {
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+                color: white;
+            }
+
+            p {
+                font-size: 3rem;
+                font-weight: bold;
+                color: white;
+                margin-bottom: 0;
+
+                @media (max-width: 480px) {
+                    font-size: 2.25rem;
+                }
+            }
+        }
+
+        .breakdown {
+            margin-top: var(--spacing-lg);
+
+            h3 {
+                font-size: 1.125rem;
+                margin-bottom: var(--spacing-md);
+            }
+
+            .agent-item {
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                h4 {
+                    font-size: 1rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                p {
+                    font-size: 0.875rem;
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+`;
 
 const TokenizerInput = () => {
     const [prompt, setPrompt] = useState('');
@@ -71,7 +228,7 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
     ];
 
     return (
-        <div className="card animate-fadeIn">
+        <TokenizerCard className="card animate-fadeIn">
             <div className="card-header">
                 <div className="flex items-center gap-sm">
                     <Sparkles size={24} style={{ color: 'var(--accent-primary)' }} />
@@ -93,29 +250,19 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                         onKeyPress={handleKeyPress}
                         placeholder="Paste your prompt here... or try an example below"
                         rows={6}
-                        style={{
-                            resize: 'vertical',
-                            fontFamily: 'monospace',
-                            fontSize: '0.9rem'
-                        }}
                     />
-                    <p style={{ fontSize: '0.875rem', marginTop: '0.5rem', marginBottom: 0 }}>
-                        💡 Press <kbd style={{ padding: '0.2rem 0.4rem', background: 'var(--bg-tertiary)', borderRadius: '4px' }}>Ctrl + Enter</kbd> to analyze
-                    </p>
+                    <p>💡 Press <kbd>Ctrl + Enter</kbd> to analyze</p>
                 </div>
 
                 {/* Quick Examples */}
-                <div style={{ marginTop: 'var(--spacing-md)' }}>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 'bold', marginBottom: 'var(--spacing-xs)' }}>
-                        Try an example:
-                    </p>
-                    <div className="flex gap-sm" style={{ flexWrap: 'wrap' }}>
+                <div className="examples">
+                    <p>Try an example:</p>
+                    <div className="flex gap-sm">
                         {examplePrompts.map((example, idx) => (
                             <button
                                 key={idx}
                                 className="btn btn-secondary"
                                 onClick={() => setPrompt(example)}
-                                style={{ fontSize: '0.875rem' }}
                             >
                                 Example {idx + 1}
                             </button>
@@ -125,10 +272,9 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
 
                 {/* Analyze Button */}
                 <button
-                    className="btn btn-primary mt-md"
+                    className="btn btn-primary mt-md analyze-btn"
                     onClick={analyzePrompt}
                     disabled={!prompt.trim()}
-                    style={{ width: '100%' }}
                 >
                     <Sparkles size={18} />
                     Analyze Tokens
@@ -137,109 +283,55 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
 
                 {/* Analysis Results */}
                 {analysis && (
-                    <div style={{ marginTop: 'var(--spacing-lg)' }}>
+                    <div className="results">
                         {analysis.isEstimate && (
-                            <div style={{
-                                padding: 'var(--spacing-sm)',
-                                background: 'rgba(245, 158, 11, 0.1)',
-                                border: '1px solid var(--accent-warning)',
-                                borderRadius: 'var(--radius-md)',
-                                marginBottom: 'var(--spacing-md)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 'var(--spacing-xs)'
-                            }}>
+                            <div className="estimate-warning">
                                 <Info size={16} style={{ color: 'var(--accent-warning)' }} />
-                                <p style={{ fontSize: '0.875rem', marginBottom: 0 }}>
+                                <p>
                                     Using character-based estimation. Install dependencies for accurate tokenization.
                                 </p>
                             </div>
                         )}
 
                         {/* Summary Cards */}
-                        <div className="grid grid-3 gap-md">
-                            <div style={{
-                                padding: 'var(--spacing-md)',
-                                background: 'rgba(239, 68, 68, 0.1)',
-                                border: '2px solid var(--accent-danger)',
-                                borderRadius: 'var(--radius-md)',
-                                textAlign: 'center'
-                            }}>
-                                <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>Monolithic Tokens</p>
-                                <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-danger)', marginBottom: 0 }}>
-                                    {formatNumber(analysis.monolithicTokens)}
-                                </p>
+                        <div className="grid grid-3 gap-md summary-cards">
+                            <div className="card-item monolithic">
+                                <p>Monolithic Tokens</p>
+                                <p>{formatNumber(analysis.monolithicTokens)}</p>
                             </div>
-
-                            <div style={{
-                                padding: 'var(--spacing-md)',
-                                background: 'rgba(16, 185, 129, 0.1)',
-                                border: '2px solid var(--accent-success)',
-                                borderRadius: 'var(--radius-md)',
-                                textAlign: 'center'
-                            }}>
-                                <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>Agentic Tokens</p>
-                                <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-success)', marginBottom: 0 }}>
-                                    {formatNumber(analysis.agenticTokens)}
-                                </p>
+                            <div className="card-item agentic">
+                                <p>Agentic Tokens</p>
+                                <p>{formatNumber(analysis.agenticTokens)}</p>
                             </div>
-
-                            <div style={{
-                                padding: 'var(--spacing-md)',
-                                background: 'var(--gradient-success)',
-                                borderRadius: 'var(--radius-md)',
-                                textAlign: 'center'
-                            }}>
-                                <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'white' }}>Tokens Saved</p>
-                                <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: 0 }}>
-                                    {formatNumber(analysis.tokensSaved)}
-                                </p>
+                            <div className="card-item saved">
+                                <p>Tokens Saved</p>
+                                <p>{formatNumber(analysis.tokensSaved)}</p>
                             </div>
                         </div>
 
                         {/* Reduction Badge */}
-                        <div style={{
-                            marginTop: 'var(--spacing-md)',
-                            padding: 'var(--spacing-lg)',
-                            background: 'var(--gradient-accent)',
-                            borderRadius: 'var(--radius-md)',
-                            textAlign: 'center'
-                        }}>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'white' }}>
-                                Token Reduction
-                            </h3>
-                            <p style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: 0 }}>
-                                {analysis.reduction.toFixed(1)}%
-                            </p>
+                        <div className="reduction-badge">
+                            <h3>Token Reduction</h3>
+                            <p>{analysis.reduction.toFixed(1)}%</p>
                         </div>
 
                         {/* Agent Breakdown */}
                         {!analysis.isEstimate && (
-                            <div style={{ marginTop: 'var(--spacing-lg)' }}>
-                                <h3 style={{ fontSize: '1.125rem', marginBottom: 'var(--spacing-md)' }}>
-                                    Agentic Breakdown
-                                </h3>
+                            <div className="breakdown">
+                                <h3>Agentic Breakdown</h3>
                                 <div className="grid gap-sm">
-                                    {analysis.agenticBreakdown.map((agent, idx) => (
+                                    {analysis.agenticBreakdown.map((agent) => (
                                         <div
                                             key={agent.id}
+                                            className="agent-item"
                                             style={{
-                                                padding: 'var(--spacing-md)',
                                                 background: `linear-gradient(90deg, ${agent.color}22 0%, ${agent.color}11 100%)`,
                                                 borderLeft: `4px solid ${agent.color}`,
-                                                borderRadius: 'var(--radius-md)',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center'
                                             }}
                                         >
                                             <div>
-                                                <h4 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                                    {agent.name}
-                                                </h4>
-                                                <p style={{ fontSize: '0.875rem', marginBottom: 0 }}>
-                                                    {agent.role}
-                                                </p>
+                                                <h4>{agent.name}</h4>
+                                                <p>{agent.role}</p>
                                             </div>
                                             <div className="badge badge-primary">
                                                 {formatNumber(agent.actualTokens)} tokens
@@ -252,7 +344,7 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                     </div>
                 )}
             </div>
-        </div >
+        </TokenizerCard>
     );
 };
 
