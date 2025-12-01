@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { BookOpen } from 'lucide-react';
 import Header from './components/Header';
 import WorkflowDiagram from './components/WorkflowDiagram';
@@ -16,6 +17,38 @@ import AboutModal from './components/AboutModal';
 import ProjectInfo from './components/ProjectInfo';
 import { defaultPricing } from './data/workflowData';
 
+const AppContainer = styled.div`
+    // No specific styles needed here as .container handles it
+`;
+
+const Section = styled.div`
+    margin-top: var(--spacing-xl);
+`;
+
+const GridSection = styled.div`
+    margin-top: var(--spacing-xl);
+`;
+
+const Footer = styled.footer`
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const FooterHeading = styled.p`
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+`;
+
+const FooterText = styled.p`
+    margin-bottom: 0;
+    opacity: 0.7;
+`;
+
+
 function App() {
     const [pricePerThousand, setPricePerThousand] = useState(defaultPricing.pricePerThousandTokens);
     const [monthlyRequests, setMonthlyRequests] = useState(100000);
@@ -23,74 +56,45 @@ function App() {
     const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     return (
-        <div className="container">
+        <AppContainer className="container">
             <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
 
             {/* Header */}
-            <header style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', position: 'relative' }}>
-                <button
-                    onClick={() => setIsAboutOpen(true)}
-                    className="btn btn-secondary"
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        padding: '0.5rem 1rem',
-                        fontSize: '0.9rem'
-                    }}
-                >
-                    <BookOpen size={16} />
-                    About Project
-                </button>
-
-                <h1 style={{
-                    fontSize: '3.5rem',
-                    marginBottom: 'var(--spacing-sm)',
-                    background: 'var(--gradient-accent)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                }}>
-                    Stop Burning Potential. <br /> Start Building Intelligence.
-                </h1>
-                <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
-                    Visualize the exponential power of agentic workflows.
-                    Move beyond simple cost savings to unlocking the true capability of AI at scale.
-                </p>
-            </header>
+            <Header onAboutClick={() => setIsAboutOpen(true)} />
 
             {/* 1. Context: Project Info */}
             <ProjectInfo />
 
             {/* 2. Interactive Learning: What is a Token? */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <TokenizerInput />
-            </div>
+            </Section>
 
             {/* 3. The Concept: Visualizing the Workflow */}
             <WorkflowDiagram />
 
             {/* 4. The Proof: Token Comparison */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <TokenComparison />
-            </div>
+            </Section>
 
             {/* 5. Real Examples: Benchmark Mode */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <BenchmarkMode />
-            </div>
+            </Section>
 
             {/* 6. Deep Dive: Scenario Builder */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <ScenarioBuilder />
-            </div>
+            </Section>
 
             {/* 7. Economics: Provider Comparison */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <ProviderComparison />
-            </div>
+            </Section>
 
             {/* 8. Business Case: Cost Calculator */}
-            <div className="grid grid-2 gap-lg" style={{ marginTop: 'var(--spacing-xl)' }}>
+            <GridSection className="grid grid-2 gap-lg">
                 <CostCalculator
                     pricePerThousand={pricePerThousand}
                     onPriceChange={setPricePerThousand}
@@ -101,42 +105,37 @@ function App() {
                     monthlyTokens={monthlyTokens}
                     onMonthlyTokensChange={setMonthlyTokens}
                 />
-            </div>
+            </GridSection>
 
             {/* 9. Long-term Value: Projections */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <ProjectionCharts pricePerThousand={pricePerThousand} />
-            </div>
+            </Section>
 
             {/* 10. Engagement: Gamification */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <Gamification
                     monthlyTokens={monthlyTokens}
                     monthlyRequests={monthlyRequests}
                     pricePerThousand={pricePerThousand}
                 />
-            </div>
+            </Section>
 
             {/* 11. Action: Export */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+            <Section>
                 <ExportTools pricePerThousand={pricePerThousand} />
-            </div>
+            </Section>
 
             {/* Footer */}
-            <footer style={{
-                marginTop: 'var(--spacing-xl)',
-                padding: 'var(--spacing-lg)',
-                textAlign: 'center',
-                borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-            }}>
-                <p style={{ marginBottom: '0.5rem', fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+            <Footer>
+                <FooterHeading>
                     Ready to Deploy Your Future?
-                </p>
-                <p style={{ marginBottom: 0, opacity: 0.7 }}>
+                </FooterHeading>
+                <FooterText>
                     Built to demonstrate the efficiency gains of agentic workflows in AI applications
-                </p>
-            </footer>
-        </div>
+                </FooterText>
+            </Footer>
+        </AppContainer>
     );
 }
 

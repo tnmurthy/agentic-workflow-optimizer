@@ -1,13 +1,23 @@
-// vitest setup to mock heavy modules
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
-// Mock chart.js to avoid rendering issues
-vi.mock('chart.js', () => {
+
+// Mock Chart.js
+vi.mock('chart.js', async () => {
+    const chart = await vi.importActual('chart.js');
     return {
-        Chart: class { },
-        register: () => { }
+        ...chart,
+        Chart: {
+            ...chart.Chart,
+            register: vi.fn(),
+        },
     };
 });
-// Mock html2canvas and jspdf
-vi.mock('html2canvas', () => ({ default: () => Promise.resolve({ toDataURL: () => '' }) }));
-vi.mock('jspdf', () => ({ jsPDF: class { } }));
+
+// Mock ResizeObserver
+const ResizeObserverMock = vi.fn(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+}));
+
+vi.stubGlobal('ResizeObserver', ResizeObserverMock);

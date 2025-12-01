@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -21,6 +22,53 @@ ChartJS.register(
     Tooltip,
     Legend
 );
+
+const Badge = styled.div`
+    font-size: 1.25rem;
+    padding: 0.75rem 1.5rem;
+`;
+
+const ChartContainer = styled.div`
+    height: 300px;
+`;
+
+const Stat = styled.div`
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+`;
+
+const SavedStat = styled(Stat)`
+    background: var(--gradient-success);
+`;
+
+const StatLabel = styled.p`
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+`;
+
+const SavedStatLabel = styled(StatLabel)`
+    color: white;
+`;
+
+const StatValue = styled.p`
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0;
+`;
+
+const MonolithicStatValue = styled(StatValue)`
+    color: var(--accent-danger);
+`;
+
+const AgenticStatValue = styled(StatValue)`
+    color: var(--accent-success);
+`;
+
+const SavedStatValue = styled(StatValue)`
+    color: white;
+`;
 
 const TokenComparison = () => {
     const tokenReduction = calculateTokenReduction(monolithicTokens, agenticTotalTokens);
@@ -105,10 +153,10 @@ const TokenComparison = () => {
                         <h2>Token Usage Comparison</h2>
                         <p>See how agentic workflows reduce token consumption</p>
                     </div>
-                    <div className="badge badge-success" style={{ fontSize: '1.25rem', padding: '0.75rem 1.5rem' }}>
+                    <Badge className="badge badge-success">
                         <TrendingDown size={20} />
                         {tokenReduction.percentage.toFixed(1)}% Reduction
-                    </div>
+                    </Badge>
                 </div>
             </div>
 
@@ -119,9 +167,9 @@ const TokenComparison = () => {
                         <h3 style={{ fontSize: '1.125rem', marginBottom: 'var(--spacing-md)' }}>
                             Overall Comparison
                         </h3>
-                        <div style={{ height: '300px' }}>
+                        <ChartContainer>
                             <Bar data={comparisonData} options={chartOptions} />
-                        </div>
+                        </ChartContainer>
                     </div>
 
                     {/* Agent Breakdown Chart */}
@@ -129,49 +177,34 @@ const TokenComparison = () => {
                         <h3 style={{ fontSize: '1.125rem', marginBottom: 'var(--spacing-md)' }}>
                             Agentic Pipeline Breakdown
                         </h3>
-                        <div style={{ height: '300px' }}>
+                        <ChartContainer>
                             <Bar data={agentBreakdownData} options={chartOptions} />
-                        </div>
+                        </ChartContainer>
                     </div>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-3 gap-md mt-lg">
-                    <div style={{
-                        textAlign: 'center',
-                        padding: 'var(--spacing-md)',
-                        background: 'var(--bg-tertiary)',
-                        borderRadius: 'var(--radius-md)'
-                    }}>
-                        <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>Monolithic</p>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-danger)', marginBottom: 0 }}>
+                    <Stat>
+                        <StatLabel>Monolithic</StatLabel>
+                        <MonolithicStatValue>
                             {monolithicTokens}
-                        </p>
-                    </div>
+                        </MonolithicStatValue>
+                    </Stat>
 
-                    <div style={{
-                        textAlign: 'center',
-                        padding: 'var(--spacing-md)',
-                        background: 'var(--bg-tertiary)',
-                        borderRadius: 'var(--radius-md)'
-                    }}>
-                        <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>Agentic</p>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-success)', marginBottom: 0 }}>
+                    <Stat>
+                        <StatLabel>Agentic</StatLabel>
+                        <AgenticStatValue>
                             {agenticTotalTokens}
-                        </p>
-                    </div>
+                        </AgenticStatValue>
+                    </Stat>
 
-                    <div style={{
-                        textAlign: 'center',
-                        padding: 'var(--spacing-md)',
-                        background: 'var(--gradient-success)',
-                        borderRadius: 'var(--radius-md)'
-                    }}>
-                        <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'white' }}>Tokens Saved</p>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: 0 }}>
+                    <SavedStat>
+                        <SavedStatLabel>Tokens Saved</SavedStatLabel>
+                        <SavedStatValue>
                             {tokenReduction.amount}
-                        </p>
-                    </div>
+                        </SavedStatValue>
+                    </SavedStat>
                 </div>
             </div>
         </div>

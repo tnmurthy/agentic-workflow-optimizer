@@ -6,6 +6,6 @@ import App from '../App';
 
 test('renders main header', () => {
     render(<App />);
-    const headerElement = screen.getByText(/Stop Burning Potential/i);
+    const headerElement = screen.getByText(/Agentic Workflow Token Optimizer/i);
     expect(headerElement).toBeInTheDocument();
 });
