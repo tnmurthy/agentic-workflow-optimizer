@@ -58,49 +58,38 @@ function App() {
                 </p>
             </header>
 
-            {/* Workflow Diagram */}
-            <WorkflowDiagram />
+            {/* 1. Context: Project Info */}
+            <ProjectInfo />
 
-            {/* Token Comparison */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
-                <TokenComparison />
-            </div>
-
-            {/* Interactive Tokenizer - NEW */}
+            {/* 2. Interactive Learning: What is a Token? */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
                 <TokenizerInput />
             </div>
 
-            {/* LLM Provider Comparison - NEW */}
+            {/* 3. The Concept: Visualizing the Workflow */}
+            <WorkflowDiagram />
+
+            {/* 4. The Proof: Token Comparison */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
-                <ProviderComparison />
+                <TokenComparison />
             </div>
 
-            {/* Scenario Builder - NEW */}
-            <div style={{ marginTop: 'var(--spacing-xl)' }}>
-                <ScenarioBuilder />
-            </div>
-
-            {/* Benchmark Mode - NEW */}
+            {/* 5. Real Examples: Benchmark Mode */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
                 <BenchmarkMode />
             </div>
 
-            {/* Gamification - NEW */}
+            {/* 6. Deep Dive: Scenario Builder */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
-                <Gamification
-                    monthlyTokens={monthlyTokens}
-                    monthlyRequests={monthlyRequests}
-                    pricePerThousand={pricePerThousand}
-                />
+                <ScenarioBuilder />
             </div>
 
-            {/* Export Tools - NEW */}
+            {/* 7. Economics: Provider Comparison */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
-                <ExportTools pricePerThousand={pricePerThousand} />
+                <ProviderComparison />
             </div>
 
-            {/* Cost Calculator and Scenario Input */}
+            {/* 8. Business Case: Cost Calculator */}
             <div className="grid grid-2 gap-lg" style={{ marginTop: 'var(--spacing-xl)' }}>
                 <CostCalculator
                     pricePerThousand={pricePerThousand}
@@ -114,13 +103,24 @@ function App() {
                 />
             </div>
 
-            {/* Projection Charts */}
+            {/* 9. Long-term Value: Projections */}
             <div style={{ marginTop: 'var(--spacing-xl)' }}>
                 <ProjectionCharts pricePerThousand={pricePerThousand} />
             </div>
 
-            {/* Project Info - NEW */}
-            <ProjectInfo />
+            {/* 10. Engagement: Gamification */}
+            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+                <Gamification
+                    monthlyTokens={monthlyTokens}
+                    monthlyRequests={monthlyRequests}
+                    pricePerThousand={pricePerThousand}
+                />
+            </div>
+
+            {/* 11. Action: Export */}
+            <div style={{ marginTop: 'var(--spacing-xl)' }}>
+                <ExportTools pricePerThousand={pricePerThousand} />
+            </div>
 
             {/* Footer */}
             <footer style={{
