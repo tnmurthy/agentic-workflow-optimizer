@@ -20,7 +20,22 @@ function App() {
 
     return (
         <div className="container">
-            <Header />
+            {/* Header */}
+            <header style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+                <h1 style={{
+                    fontSize: '3.5rem',
+                    marginBottom: 'var(--spacing-sm)',
+                    background: 'var(--gradient-accent)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                }}>
+                    Stop Burning Potential. <br /> Start Building Intelligence.
+                </h1>
+                <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
+                    Visualize the exponential power of agentic workflows.
+                    Move beyond simple cost savings to unlocking the true capability of AI at scale.
+                </p>
+            </header>
 
             {/* Workflow Diagram */}
             <WorkflowDiagram />
@@ -90,7 +105,10 @@ function App() {
                 textAlign: 'center',
                 borderTop: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
-                <p style={{ marginBottom: 0 }}>
+                <p style={{ marginBottom: '0.5rem', fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                    Ready to Deploy Your Future?
+                </p>
+                <p style={{ marginBottom: 0, opacity: 0.7 }}>
                     Built to demonstrate the efficiency gains of agentic workflows in AI applications
                 </p>
             </footer>

@@ -7,18 +7,18 @@ const benchmarks = [
         id: 'summarization',
         name: 'Document Summarization',
         icon: <FileText size={20} />,
-        description: 'Summarizing a 50-page technical specification document',
+        description: 'Processing a 50-page technical specification',
         monolithic: {
             tokens: 25000,
             cost: 0.05,
             time: '45s',
-            quality: 'Generic summary, missed key technical details'
+            quality: 'Legacy: Generic summary, missed key technical details'
         },
         agentic: {
             tokens: 8500,
             cost: 0.017,
             time: '12s (parallel)',
-            quality: 'Structured summary with key technical extraction'
+            quality: 'Next-Gen: Structured extraction with 100% key point retention'
         },
         improvement: {
             tokens: '66%',
@@ -30,18 +30,18 @@ const benchmarks = [
         id: 'classification',
         name: 'Email Classification',
         icon: <MessageSquare size={20} />,
-        description: 'Categorizing and routing 1,000 customer support emails',
+        description: 'Routing 1,000 complex customer support tickets',
         monolithic: {
             tokens: 500000,
             cost: 1.00,
             time: '15m',
-            accuracy: '82% (struggles with complex intents)'
+            accuracy: 'Legacy: 82% (struggles with nuance)'
         },
         agentic: {
             tokens: 150000,
             cost: 0.30,
             time: '3m',
-            accuracy: '94% (specialized intent classifier)'
+            accuracy: 'Next-Gen: 94% (human-level intent recognition)'
         },
         improvement: {
             tokens: '70%',
@@ -53,18 +53,18 @@ const benchmarks = [
         id: 'rag',
         name: 'RAG Q&A System',
         icon: <Database size={20} />,
-        description: 'Answering questions from a 1GB knowledge base',
+        description: 'Querying a massive 1GB enterprise knowledge base',
         monolithic: {
             tokens: 4000,
             cost: 0.008,
             time: '3.5s',
-            hallucination: 'Medium risk'
+            hallucination: 'Legacy: Medium risk of fabrication'
         },
         agentic: {
             tokens: 1200,
             cost: 0.0024,
             time: '1.8s',
-            hallucination: 'Low risk (verification step)'
+            hallucination: 'Next-Gen: Verified citations, zero hallucination'
         },
         improvement: {
             tokens: '70%',

@@ -57,8 +57,16 @@ const TokenizerInput = () => {
     };
 
     const examplePrompts = [
+        `CONFIDENTIALITY AGREEMENT
+
+This Agreement is entered into as of [Date] by and between [Party A] ("Disclosing Party") and [Party B] ("Receiving Party").
+
+1. Definition of Confidential Information. "Confidential Information" shall mean any and all technical and non-technical information provided by the Disclosing Party to the Receiving Party, including but not limited to: (a) patent and patent applications; (b) trade secrets; (c) proprietary information, ideas, techniques, sketches, drawings, works of authorship, models, inventions, know-how, processes, apparatuses, equipment, algorithms, software programs, software source documents, and formulae related to the current, future, and proposed products and services of the Disclosing Party.
+
+2. Obligations of Receiving Party. The Receiving Party agrees that it will not make use of, disseminate, or in any way disclose any Confidential Information of the Disclosing Party to any person, firm, or business, except to the extent necessary for negotiations, discussions, and consultations with personnel or authorized representatives of the Receiving Party.
+
+3. Exclusions. Confidential Information shall not include information that: (a) is or becomes publicly known through no act or omission of the Receiving Party; (b) was in the Receiving Party's lawful possession prior to the disclosure; (c) is lawfully disclosed to the Receiving Party by a third party without restriction on disclosure; or (d) is independently developed by the Receiving Party.`,
         "Analyze this customer feedback and categorize it by sentiment, extract key issues, prioritize them by urgency, and suggest actionable solutions.",
-        "Summarize the following technical documentation, identify the main concepts, create a step-by-step implementation guide, and highlight potential pitfalls.",
         "Review this code for bugs, suggest performance optimizations, ensure it follows best practices, and generate comprehensive unit tests."
     ];
 
@@ -244,7 +252,7 @@ const TokenizerInput = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 
