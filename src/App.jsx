@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BookOpen } from 'lucide-react';
 import Header from './components/Header';
 import WorkflowDiagram from './components/WorkflowDiagram';
 import TokenComparison from './components/TokenComparison';
@@ -11,17 +12,36 @@ import ExportTools from './components/ExportTools';
 import ScenarioBuilder from './components/ScenarioBuilder';
 import BenchmarkMode from './components/BenchmarkMode';
 import Gamification from './components/Gamification';
+import AboutModal from './components/AboutModal';
 import { defaultPricing } from './data/workflowData';
 
 function App() {
     const [pricePerThousand, setPricePerThousand] = useState(defaultPricing.pricePerThousandTokens);
     const [monthlyRequests, setMonthlyRequests] = useState(100000);
     const [monthlyTokens, setMonthlyTokens] = useState(10000000);
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     return (
         <div className="container">
+            <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+
             {/* Header */}
-            <header style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+            <header style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', position: 'relative' }}>
+                <button
+                    onClick={() => setIsAboutOpen(true)}
+                    className="btn btn-secondary"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.9rem'
+                    }}
+                >
+                    <BookOpen size={16} />
+                    About Project
+                </button>
+
                 <h1 style={{
                     fontSize: '3.5rem',
                     marginBottom: 'var(--spacing-sm)',
