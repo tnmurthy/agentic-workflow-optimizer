@@ -4,6 +4,7 @@ import { Sparkles, ArrowRight, Info } from 'lucide-react';
 import { encode } from 'gpt-tokenizer';
 import { agents, monolithicTokens } from '../data/workflowData';
 import { formatNumber } from '../utils/calculations';
+import PromptBreakdown from './PromptBreakdown';
 
 const TokenizerCard = styled.div`
     .input-group {
@@ -299,6 +300,9 @@ Please analyze the proposed Saga implementation for potential failure scenarios,
                     />
                     <p>💡 Press <kbd>Ctrl + Enter</kbd> to analyze</p>
                 </div>
+
+                {/* Prompt Breakdown Widget */}
+                <PromptBreakdown text={prompt} />
 
                 {/* Quick Examples */}
                 <div className="examples">
