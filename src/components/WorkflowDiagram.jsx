@@ -6,7 +6,7 @@ const WorkflowDiagram = () => {
     return (
         <div className="card animate-fadeIn">
             <div className="card-header">
-                <h2>Agentic Workflow Pipeline</h2>
+                <h2>Step 2: Workflow Pipeline (Orchestration)</h2>
                 <p>Modular agents working together to process requests efficiently</p>
             </div>
 

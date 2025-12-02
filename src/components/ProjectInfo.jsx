@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Target, Users, Layers, Layout, Zap } from 'lucide-react';
+import LogicFlow from './LogicFlow';
 
 const Card = styled.div`
     margin-top: var(--spacing-xl);
@@ -54,60 +55,63 @@ const ProjectInfo = () => {
             </div>
 
             <div className="card-body">
-                {/* 1. Overview */}
+                {/* 1. Executive Summary */}
                 <Section>
-                    <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
-                        The <strong>Agentic Workflow Token Optimization Web App</strong> is an interactive, educational tool designed to demonstrate how agentic workflows can significantly reduce LLM token usage and costs compared to monolithic prompts. It serves as a decision-support aid for teams evaluating AI architectures.
+                    <Heading className="flex items-center gap-sm">
+                        <Target size={20} /> Executive Summary
+                    </Heading>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                        <strong>The Challenge:</strong> As enterprises scale AI adoption, operational costs from "monolithic" (single-prompt) workflows are becoming unsustainable.
+                        <br />
+                        <strong>The Solution:</strong> "Agentic Workflows"—breaking complex tasks into specialized, smaller steps—can reduce token consumption by over 60% while improving accuracy.
+                        <br />
+                        <strong>The Value:</strong> This tool provides a quantifiable framework to visualize these savings, model different architectural scenarios, and justify the ROI of moving to agentic systems.
                     </p>
                 </Section>
 
+                {/* 2. The Logic: Visual Flow */}
+                <Section>
+                    <Heading className="flex items-center gap-sm">
+                        <Layers size={20} /> The Logic
+                    </Heading>
+                    <LogicFlow />
+                </Section>
+
                 <div className="grid grid-2 gap-lg">
-                    {/* 2. Goals */}
+                    {/* 3. Strategic Recommendations */}
                     <div>
                         <Heading className="flex items-center gap-sm">
-                            <Target size={20} /> Goals & Objectives
+                            <Users size={20} /> Strategic Recommendations
                         </Heading>
                         <List>
-                            <li><strong>Visualize Savings:</strong> Make token and cost reductions tangible and easy to understand.</li>
-                            <li><strong>Realistic Modeling:</strong> Allow users to plug in their own pricing and usage assumptions.</li>
-                            <li><strong>Premium Experience:</strong> Showcase modern frontend engineering with a polished, high-tech design.</li>
+                            <li><strong>Start Small:</strong> Pilot agentic workflows on high-volume, low-complexity tasks first.</li>
+                            <li><strong>Measure Everything:</strong> Use our "Cost Calculator" to establish a baseline before migrating.</li>
+                            <li><strong>Optimize Continuously:</strong> Re-evaluate your agent definitions as model pricing evolves.</li>
                         </List>
                     </div>
 
-                    {/* 3. Target Users */}
+                    {/* 4. Key Capabilities */}
                     <div>
                         <Heading className="flex items-center gap-sm">
-                            <Users size={20} /> Target Users
+                            <ZapIcon size={20} /> The Toolkit
                         </Heading>
-                        <List>
-                            <li><strong>AI Product Managers:</strong> Evaluating architectures and vendor costs.</li>
-                            <li><strong>LLM Engineers:</strong> Designing and tuning agentic pipelines.</li>
-                            <li><strong>Finance & Ops:</strong> Modeling long-term LLM spend and ROI.</li>
-                        </List>
+                        <div className="grid grid-2 gap-md">
+                            {[
+                                "Interactive Workflow Engine",
+                                "Real-time Cost Analysis",
+                                "Multi-Model Pricing",
+                                "Strategic Scenario Builder",
+                                "Performance Benchmarks",
+                                "ROI Projection Engine"
+                            ].map((feature, i) => (
+                                <Feature key={i}>
+                                    <ZapIcon size={14} />
+                                    {feature}
+                                </Feature>
+                            ))}
+                        </div>
                     </div>
                 </div>
-
-                {/* 4. Key Features */}
-                <KeyFeaturesSection>
-                    <Heading className="flex items-center gap-sm">
-                        <Layers size={20} /> Key Capabilities
-                    </Heading>
-                    <div className="grid grid-3 gap-md">
-                        {[
-                            "Interactive Workflow Diagram",
-                            "Real-time Token Comparison",
-                            "Multi-Provider Pricing",
-                            "Custom Scenario Builder",
-                            "Benchmark Scenarios",
-                            "ROI & Cost Projections"
-                        ].map((feature, i) => (
-                            <Feature key={i}>
-                                <ZapIcon size={14} />
-                                {feature}
-                            </Feature>
-                        ))}
-                    </div>
-                </KeyFeaturesSection>
             </div>
         </Card>
     );
