@@ -162,9 +162,12 @@ const TokenizerCard = styled.div`
     }
 `;
 
-const TokenizerInput = () => {
+const TokenizerInput = ({ analysis: externalAnalysis, onAnalysisChange }) => {
     const [prompt, setPrompt] = useState('');
     const [analysis, setAnalysis] = useState(null);
+
+    // Use external analysis if provided, otherwise use local
+    const currentAnalysis = externalAnalysis !== undefined ? externalAnalysis : analysis;
 
     const analyzePrompt = () => {
         if (!prompt.trim()) return;
@@ -184,19 +187,25 @@ const TokenizerInput = () => {
             const agenticTotal = agenticBreakdown.reduce((sum, a) => sum + a.actualTokens, 0);
             const reduction = ((tokenCount - agenticTotal) / tokenCount) * 100;
 
-            setAnalysis({
+            const newAnalysis = {
                 original: prompt,
                 monolithicTokens: tokenCount,
                 agenticTokens: agenticTotal,
                 agenticBreakdown,
                 reduction: reduction > 0 ? reduction : 0,
                 tokensSaved: tokenCount > agenticTotal ? tokenCount - agenticTotal : 0
-            });
+            };
+
+            // Update both local and external state
+            setAnalysis(newAnalysis);
+            if (onAnalysisChange) {
+                onAnalysisChange(newAnalysis);
+            }
         } catch (error) {
             console.error('Tokenization error:', error);
             // Fallback to character-based estimation
             const estimatedTokens = Math.ceil(prompt.length / 4);
-            setAnalysis({
+            const fallbackAnalysis = {
                 original: prompt,
                 monolithicTokens: estimatedTokens,
                 agenticTokens: Math.floor(estimatedTokens * 0.425),
@@ -204,7 +213,11 @@ const TokenizerInput = () => {
                 reduction: 57.5,
                 tokensSaved: Math.floor(estimatedTokens * 0.575),
                 isEstimate: true
-            });
+            };
+            setAnalysis(fallbackAnalysis);
+            if (onAnalysisChange) {
+                onAnalysisChange(fallbackAnalysis);
+            }
         }
     };
 
@@ -332,9 +345,9 @@ Please analyze the proposed Saga implementation for potential failure scenarios,
                 </button>
 
                 {/* Analysis Results */}
-                {analysis && (
+                {currentAnalysis && (
                     <div className="results">
-                        {analysis.isEstimate && (
+                        {currentAnalysis.isEstimate && (
                             <div className="estimate-warning">
                                 <Info size={16} style={{ color: 'var(--accent-warning)' }} />
                                 <p>
@@ -347,30 +360,30 @@ Please analyze the proposed Saga implementation for potential failure scenarios,
                         <div className="grid grid-3 gap-md summary-cards">
                             <div className="card-item monolithic">
                                 <p>Monolithic Tokens</p>
-                                <p>{formatNumber(analysis.monolithicTokens)}</p>
+                                <p>{formatNumber(currentAnalysis.monolithicTokens)}</p>
                             </div>
                             <div className="card-item agentic">
                                 <p>Agentic Tokens</p>
-                                <p>{formatNumber(analysis.agenticTokens)}</p>
+                                <p>{formatNumber(currentAnalysis.agenticTokens)}</p>
                             </div>
                             <div className="card-item saved">
                                 <p>Tokens Saved</p>
-                                <p>{formatNumber(analysis.tokensSaved)}</p>
+                                <p>{formatNumber(currentAnalysis.tokensSaved)}</p>
                             </div>
                         </div>
 
                         {/* Reduction Badge */}
                         <div className="reduction-badge">
                             <h3>Token Reduction</h3>
-                            <p>{analysis.reduction.toFixed(1)}%</p>
+                            <p>{currentAnalysis.reduction.toFixed(1)}%</p>
                         </div>
 
                         {/* Agent Breakdown */}
-                        {!analysis.isEstimate && (
+                        {!currentAnalysis.isEstimate && (
                             <div className="breakdown">
                                 <h3>Agentic Breakdown</h3>
                                 <div className="grid gap-sm">
-                                    {analysis.agenticBreakdown.map((agent) => (
+                                    {currentAnalysis.agenticBreakdown.map((agent) => (
                                         <div
                                             key={agent.id}
                                             className="agent-item"

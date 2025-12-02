@@ -102,7 +102,9 @@ const ProjectInfo = () => {
                                 "Multi-Model Pricing",
                                 "Strategic Scenario Builder",
                                 "Performance Benchmarks",
-                                "ROI Projection Engine"
+                                "ROI Projection Engine",
+                                "Token Flow Sankey Charts",
+                                "Prompt Breakdown Widget"
                             ].map((feature, i) => (
                                 <Feature key={i}>
                                     <ZapIcon size={14} />
