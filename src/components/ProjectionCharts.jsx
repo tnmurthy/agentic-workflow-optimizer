@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Bar, Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -29,15 +29,19 @@ ChartJS.register(
     Filler
 );
 
+const commonCardStyles = css`
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+`;
+
 const ChartContainer = styled.div`
     height: 400px;
 `;
 
 const Stat = styled.div`
-    padding: var(--spacing-md);
+    ${commonCardStyles}
     background: var(--bg-tertiary);
-    border-radius: var(--radius-md);
-    text-align: center;
 `;
 
 const StatLabel = styled.p`
@@ -58,11 +62,9 @@ const StatUnit = styled.p`
 `;
 
 const TotalSavings = styled.div`
+    ${commonCardStyles}
     margin-top: var(--spacing-lg);
-    padding: var(--spacing-lg);
     background: var(--gradient-success);
-    border-radius: var(--radius-md);
-    text-align: center;
 `;
 
 const TotalSavingsLabel = styled.h3`
@@ -76,6 +78,10 @@ const TotalSavingsValue = styled.p`
     font-weight: bold;
     color: white;
     margin-bottom: 0;
+
+    @media (max-width: 480px) {
+        font-size: 2.25rem;
+    }
 `;
 
 const ProjectionCharts = ({ pricePerThousand }) => {
