@@ -4,6 +4,7 @@ import { Sparkles, ArrowRight, Info } from 'lucide-react';
 import { encode } from 'gpt-tokenizer';
 import { agents, monolithicTokens } from '../data/workflowData';
 import { formatNumber } from '../utils/calculations';
+import PromptBreakdown from './PromptBreakdown';
 
 const TokenizerCard = styled.div`
     .input-group {
@@ -161,9 +162,12 @@ const TokenizerCard = styled.div`
     }
 `;
 
-const TokenizerInput = () => {
+const TokenizerInput = ({ analysis: externalAnalysis, onAnalysisChange }) => {
     const [prompt, setPrompt] = useState('');
     const [analysis, setAnalysis] = useState(null);
+
+    // Use external analysis if provided, otherwise use local
+    const currentAnalysis = externalAnalysis !== undefined ? externalAnalysis : analysis;
 
     const analyzePrompt = () => {
         if (!prompt.trim()) return;
@@ -183,19 +187,25 @@ const TokenizerInput = () => {
             const agenticTotal = agenticBreakdown.reduce((sum, a) => sum + a.actualTokens, 0);
             const reduction = ((tokenCount - agenticTotal) / tokenCount) * 100;
 
-            setAnalysis({
+            const newAnalysis = {
                 original: prompt,
                 monolithicTokens: tokenCount,
                 agenticTokens: agenticTotal,
                 agenticBreakdown,
                 reduction: reduction > 0 ? reduction : 0,
                 tokensSaved: tokenCount > agenticTotal ? tokenCount - agenticTotal : 0
-            });
+            };
+
+            // Update both local and external state
+            setAnalysis(newAnalysis);
+            if (onAnalysisChange) {
+                onAnalysisChange(newAnalysis);
+            }
         } catch (error) {
             console.error('Tokenization error:', error);
             // Fallback to character-based estimation
             const estimatedTokens = Math.ceil(prompt.length / 4);
-            setAnalysis({
+            const fallbackAnalysis = {
                 original: prompt,
                 monolithicTokens: estimatedTokens,
                 agenticTokens: Math.floor(estimatedTokens * 0.425),
@@ -203,7 +213,11 @@ const TokenizerInput = () => {
                 reduction: 57.5,
                 tokensSaved: Math.floor(estimatedTokens * 0.575),
                 isEstimate: true
-            });
+            };
+            setAnalysis(fallbackAnalysis);
+            if (onAnalysisChange) {
+                onAnalysisChange(fallbackAnalysis);
+            }
         }
     };
 
@@ -223,8 +237,54 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
 2. Obligations of Receiving Party. The Receiving Party agrees that it will not make use of, disseminate, or in any way disclose any Confidential Information of the Disclosing Party to any person, firm, or business, except to the extent necessary for negotiations, discussions, and consultations with personnel or authorized representatives of the Receiving Party.
 
 3. Exclusions. Confidential Information shall not include information that: (a) is or becomes publicly known through no act or omission of the Receiving Party; (b) was in the Receiving Party's lawful possession prior to the disclosure; (c) is lawfully disclosed to the Receiving Party by a third party without restriction on disclosure; or (d) is independently developed by the Receiving Party.`,
-        "Analyze this customer feedback and categorize it by sentiment, extract key issues, prioritize them by urgency, and suggest actionable solutions.",
-        "Review this code for bugs, suggest performance optimizations, ensure it follows best practices, and generate comprehensive unit tests."
+
+        `PRODUCT LAUNCH STRATEGY: "NEBULA" AI ASSISTANT
+
+1. Executive Summary
+The launch of "Nebula" represents a pivotal moment for our enterprise AI division. Our goal is to capture 15% of the mid-market sector within Q1 by positioning Nebula not just as a tool, but as a proactive team member.
+
+2. Target Audience Segments
+- Primary: CTOs and VP Engineering at Series B-D startups who are struggling with developer velocity.
+- Secondary: Product Managers looking for automated user feedback analysis.
+- Tertiary: Customer Support Leads needing 24/7 triage capabilities.
+
+3. Key Messaging Pillars
+- "Intelligence that Anticipates": Focus on the predictive capabilities, not just reactive responses.
+- "Seamless Integration": Highlight the 1-click install for Jira, GitHub, and Slack.
+- "Enterprise-Grade Security": Emphasize SOC2 compliance and on-premise deployment options.
+
+4. Channel Strategy
+- Content Marketing: Deep-dive technical whitepapers on "The Future of Agentic Workflows".
+- LinkedIn Campaign: Video testimonials from beta users showing "Before vs. After" velocity metrics.
+- Developer Relations: Hackathons and sponsored challenges on Dev.to and Hashnode.`,
+
+        `SYSTEM ARCHITECTURE REVIEW: MICROSERVICES MIGRATION
+
+Context:
+We are migrating our legacy monolithic e-commerce platform to a Kubernetes-based microservices architecture. We need a comprehensive review of the proposed data consistency model.
+
+Current State:
+- Single PostgreSQL database handling User, Product, and Order data.
+- Tight coupling between Order Processing and Inventory Management.
+- synchronous API calls causing latency spikes during Black Friday traffic.
+
+Proposed Architecture:
+1. Service Decomposition:
+   - User Service (Auth0 integration)
+   - Product Catalog Service (Read-heavy, Redis caching)
+   - Order Service (Event-driven, Kafka producer)
+   - Inventory Service (Kafka consumer, optimistic locking)
+
+2. Data Consistency Strategy:
+   - Implementing the Saga Pattern (Choreography-based) for distributed transactions.
+   - Each service owns its own database (Polyglot persistence: Postgres for Orders, Mongo for Catalog).
+   - Eventual consistency for inventory counts on the frontend.
+
+Request for Review:
+Please analyze the proposed Saga implementation for potential failure scenarios, specifically:
+- What happens if the Inventory Service consumes an "OrderCreated" event but fails to reserve stock?
+- How do we handle "Compensating Transactions" if the Payment Gateway fails after stock is reserved?
+- Are there race conditions in the optimistic locking mechanism for high-velocity items?`
     ];
 
     return (
@@ -233,7 +293,7 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                 <div className="flex items-center gap-sm">
                     <Sparkles size={24} style={{ color: 'var(--accent-primary)' }} />
                     <div>
-                        <h2>Interactive Tokenizer</h2>
+                        <h2>Step 1: Agentic Breakdown (Decomposition)</h2>
                         <p>Paste your prompt to see real-time token analysis</p>
                     </div>
                 </div>
@@ -253,6 +313,9 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                     />
                     <p>💡 Press <kbd>Ctrl + Enter</kbd> to analyze</p>
                 </div>
+
+                {/* Prompt Breakdown Widget */}
+                <PromptBreakdown text={prompt} />
 
                 {/* Quick Examples */}
                 <div className="examples">
@@ -282,9 +345,9 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                 </button>
 
                 {/* Analysis Results */}
-                {analysis && (
+                {currentAnalysis && (
                     <div className="results">
-                        {analysis.isEstimate && (
+                        {currentAnalysis.isEstimate && (
                             <div className="estimate-warning">
                                 <Info size={16} style={{ color: 'var(--accent-warning)' }} />
                                 <p>
@@ -297,30 +360,30 @@ This Agreement is entered into as of [Date] by and between [Party A] ("Disclosin
                         <div className="grid grid-3 gap-md summary-cards">
                             <div className="card-item monolithic">
                                 <p>Monolithic Tokens</p>
-                                <p>{formatNumber(analysis.monolithicTokens)}</p>
+                                <p>{formatNumber(currentAnalysis.monolithicTokens)}</p>
                             </div>
                             <div className="card-item agentic">
                                 <p>Agentic Tokens</p>
-                                <p>{formatNumber(analysis.agenticTokens)}</p>
+                                <p>{formatNumber(currentAnalysis.agenticTokens)}</p>
                             </div>
                             <div className="card-item saved">
                                 <p>Tokens Saved</p>
-                                <p>{formatNumber(analysis.tokensSaved)}</p>
+                                <p>{formatNumber(currentAnalysis.tokensSaved)}</p>
                             </div>
                         </div>
 
                         {/* Reduction Badge */}
                         <div className="reduction-badge">
                             <h3>Token Reduction</h3>
-                            <p>{analysis.reduction.toFixed(1)}%</p>
+                            <p>{currentAnalysis.reduction.toFixed(1)}%</p>
                         </div>
 
                         {/* Agent Breakdown */}
-                        {!analysis.isEstimate && (
+                        {!currentAnalysis.isEstimate && (
                             <div className="breakdown">
                                 <h3>Agentic Breakdown</h3>
                                 <div className="grid gap-sm">
-                                    {analysis.agenticBreakdown.map((agent) => (
+                                    {currentAnalysis.agenticBreakdown.map((agent) => (
                                         <div
                                             key={agent.id}
                                             className="agent-item"

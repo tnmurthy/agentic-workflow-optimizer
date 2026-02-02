@@ -21,3 +21,27 @@ const ResizeObserverMock = vi.fn(() => ({
 }));
 
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+
+// Mock Canvas API for Chart.js
+HTMLCanvasElement.prototype.getContext = () => {
+    return {
+        fillStyle: '',
+        fillRect: vi.fn(),
+        measureText: () => ({ width: 0 }),
+        beginPath: vi.fn(),
+        moveTo: vi.fn(),
+        lineTo: vi.fn(),
+        stroke: vi.fn(),
+        fill: vi.fn(),
+        arc: vi.fn(),
+        save: vi.fn(),
+        restore: vi.fn(),
+        translate: vi.fn(),
+        rotate: vi.fn(),
+        scale: vi.fn(),
+        clearRect: vi.fn(),
+        setLineDash: vi.fn(),
+        getLineDash: () => [],
+        createLinearGradient: () => ({ addColorStop: vi.fn() }),
+    };
+};

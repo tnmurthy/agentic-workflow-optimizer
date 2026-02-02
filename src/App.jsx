@@ -15,6 +15,8 @@ import BenchmarkMode from './components/BenchmarkMode';
 import Gamification from './components/Gamification';
 import AboutModal from './components/AboutModal';
 import ProjectInfo from './components/ProjectInfo';
+import TokenFlowSankey from './components/TokenFlowSankey';
+import CostBreakdownSankey from './components/CostBreakdownSankey';
 import { defaultPricing } from './data/workflowData';
 
 const AppContainer = styled.div`
@@ -54,6 +56,7 @@ function App() {
     const [monthlyRequests, setMonthlyRequests] = useState(100000);
     const [monthlyTokens, setMonthlyTokens] = useState(10000000);
     const [isAboutOpen, setIsAboutOpen] = useState(false);
+    const [tokenAnalysis, setTokenAnalysis] = useState(null); // Lifted state for token analysis
 
     return (
         <AppContainer className="container">
@@ -67,7 +70,15 @@ function App() {
 
             {/* 2. Interactive Learning: What is a Token? */}
             <Section>
-                <TokenizerInput />
+                <TokenizerInput
+                    analysis={tokenAnalysis}
+                    onAnalysisChange={setTokenAnalysis}
+                />
+            </Section>
+
+            {/* 2.5. Token Flow Visualization */}
+            <Section>
+                <TokenFlowSankey tokenAnalysis={tokenAnalysis} />
             </Section>
 
             {/* 3. The Concept: Visualizing the Workflow */}
@@ -110,6 +121,11 @@ function App() {
             {/* 9. Long-term Value: Projections */}
             <Section>
                 <ProjectionCharts pricePerThousand={pricePerThousand} />
+            </Section>
+
+            {/* 9.5. Cost Flow Analysis */}
+            <Section>
+                <CostBreakdownSankey />
             </Section>
 
             {/* 10. Engagement: Gamification */}

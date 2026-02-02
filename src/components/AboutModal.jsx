@@ -119,6 +119,13 @@ const AboutModal = ({ isOpen, onClose }) => {
                     <Section>
                         <SectionTitle><BarChart size={20} /> Quantified Impact & Benefits</SectionTitle>
                         <p>This optimization process can reduce token usage by <strong>30-60%</strong>, depending on the workflow's complexity. This reduction directly translates to significant cost savings, improved performance, and a more sustainable and scalable AI infrastructure.</p>
+                        <p><strong>Interactive Visualizations:</strong> This tool now includes advanced visual analytics:</p>
+                        <List>
+                            <li><strong>Prompt Breakdown Widget:</strong> Real-time token analysis with agent mapping and hover tooltips showing token details.</li>
+                            <li><strong>Token Flow Sankey:</strong> Visual representation of token movement through the agentic pipeline, showing reduction at each stage.</li>
+                            <li><strong>Cost Breakdown Sankey:</strong> Side-by-side comparison of monolithic vs agentic cost flows, highlighting savings.</li>
+                            <li><strong>Interactive Charts:</strong> Projection charts, comparison graphs, and benchmark scenarios for comprehensive analysis.</li>
+                        </List>
                     </Section>
 
                     <Section>
