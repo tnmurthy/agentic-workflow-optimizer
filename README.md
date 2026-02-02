@@ -105,6 +105,13 @@ At scale (100M tokens/month):
 - **Icons**: Lucide React
 - **Styling**: Vanilla CSS with CSS Variables
 
+## 🏛️ Architecture
+
+For a detailed overview of the application's architecture, please see the following documents:
+
+- **[High-Level Design (HDL)](./docs/hdl.md)**: An overview of the system architecture, components, and data flow.
+- **[Low-Level Design (LLD)](./docs/lld.md)**: A detailed look at the implementation of key components and logic.
+
 ## 📁 Project Structure
 
 ```
