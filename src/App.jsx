@@ -62,12 +62,15 @@ function App() {
     const [tokenAnalysis, setTokenAnalysis] = useState(null); // Lifted state for token analysis
 
     return (
-        <ErrorBoundary>
         <AppContainer className="container">
-            <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+            <ErrorBoundary>
+                <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+            </ErrorBoundary>
 
             {/* Header */}
-            <Header onAboutClick={() => setIsAboutOpen(true)} />
+            <ErrorBoundary>
+                <Header onAboutClick={() => setIsAboutOpen(true)} />
+            </ErrorBoundary>
 
             {/* 1. Context: Project Info */}
             <ErrorBoundary>
@@ -197,7 +200,6 @@ function App() {
                 </FooterText>
             </Footer>
         </AppContainer>
-        </ErrorBoundary>
     );
 }
 
