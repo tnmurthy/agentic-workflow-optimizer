@@ -149,12 +149,40 @@ const DiagramContainer = styled.div`
     }
 `;
 
+const PIPELINE_DIAGRAM = `
+flowchart TB
+  P["Prompt<br/>(User input)"] --> T["Tokenization<br/>(tokenize → t001..t120)"]
+  T --> TOK["Tokens Pool<br/>tokens: t001..t120 (120)"]
+
+  %% Distribution (simple parallel nodes)
+  TOK --> A1["Agent 1<br/>tokens: t001..t040 (40)"]
+  TOK --> A2["Agent 2<br/>tokens: t041..t080 (40)"]
+  TOK --> A3["Agent 3<br/>tokens: t081..t120 (40)"]
+
+  %% Agent processing outputs
+  A1 --> AP1["Agent1 Processing<br/>consumes t001..t040<br/>output: summary_chunk_1, u001..u005"]
+  A2 --> AP2["Agent2 Processing<br/>consumes t041..t080<br/>output: facts_table, u006..u010"]
+  A3 --> AP3["Agent3 Processing<br/>consumes t081..t120<br/>output: enrichment_payload, u011..u015"]
+
+  %% Optional feedback loops (simple)
+  AP1 -->|feedback if conf &lt; 0.75| TOK
+  AP2 -->|cost-optimize / truncate| TOK
+
+  %% Aggregation and finalization
+  AP1 --> AGG["Aggregation & Recomposition<br/>merge outputs → merged_tokens m001..m030"]
+  AP2 --> AGG
+  AP3 --> AGG
+
+  AGG --> FINAL["Final Response Assembly<br/>detokenize m001..m030 → final_text<br/>post-process & safety checks"]
+  FINAL --> OUT["Output to user<br/>final token footprint: 30 tokens"]
+`;
+
 const LogicFlow = () => {
     const chartRef = useRef(null);
 
     useEffect(() => {
         mermaid.initialize({
-            startOnLoad: true,
+            startOnLoad: false,
             theme: 'base',
             themeVariables: {
                 primaryColor: '#F1F5F9',
@@ -167,38 +195,19 @@ const LogicFlow = () => {
             fontFamily: 'Inter'
         });
 
-        if (chartRef.current) {
-            mermaid.contentLoaded();
-        }
+        const renderDiagram = async () => {
+            if (chartRef.current) {
+                try {
+                    const { svg } = await mermaid.render('workflow-pipeline-diagram', PIPELINE_DIAGRAM.trim());
+                    chartRef.current.innerHTML = svg;
+                } catch (error) {
+                    console.error('Mermaid render error:', error);
+                }
+            }
+        };
+
+        renderDiagram();
     }, []);
-
-    const diagramDefinition = `
-flowchart TB
-  P[Prompt<br/>(User input)] --> T[Tokenization<br/>(tokenize -> t001..t120)]
-  T --> TOK[Tokens Pool<br/>tokens: t001..t120 (120)]
-
-  %% Distribution (simple parallel nodes)
-  TOK --> A1[Agent 1<br/>tokens: t001..t040 (40)]
-  TOK --> A2[Agent 2<br/>tokens: t041..t080 (40)]
-  TOK --> A3[Agent 3<br/>tokens: t081..t120 (40)]
-
-  %% Agent processing outputs
-  A1 --> AP1[Agent1 Processing<br/>consumes t001..t040<br/>output: summary_chunk_1, u001..u005]
-  A2 --> AP2[Agent2 Processing<br/>consumes t041..t080<br/>output: facts_table, u006..u010]
-  A3 --> AP3[Agent3 Processing<br/>consumes t081..t120<br/>output: enrichment_payload, u011..u015]
-
-  %% Optional feedback loops (simple)
-  AP1 -->|feedback if conf < 0.75| TOK
-  AP2 -->|cost-optimize / truncate| TOK
-
-  %% Aggregation and finalization
-  AP1 --> AGG[Aggregation & Recomposition<br/>merge outputs -> merged_tokens m001..m030]
-  AP2 --> AGG
-  AP3 --> AGG
-
-  AGG --> FINAL[Final Response Assembly<br/>detokenize m001..m030 -> final_text<br/>post-process & safety checks]
-  FINAL --> OUT[Output to user<br/>final token footprint: 30 tokens]
-    `;
 
     return (
         <Container>
@@ -251,7 +260,7 @@ flowchart TB
 
             {/* Detailed Diagram */}
             <h3 className="text-center mb-md">Visualizing the Pipeline</h3>
-            <DiagramContainer className="mermaid" ref={chartRef}>
+            <DiagramContainer ref={chartRef}>
                 {diagramDefinition}
             </DiagramContainer>
         </Container>
