@@ -118,7 +118,9 @@ function App() {
                     <TabButton
                         key={id}
                         role="tab"
+                        id={`tab-${id}`}
                         aria-selected={activeTab === id}
+                        aria-controls={`tabpanel-${id}`}
                         $active={activeTab === id}
                         onClick={() => setActiveTab(id)}
                     >
@@ -129,13 +131,13 @@ function App() {
             </TabBar>
 
             {/* Tab: Overview */}
-            <TabContent $active={activeTab === 'overview'} role="tabpanel">
+            <TabContent $active={activeTab === 'overview'} role="tabpanel" id="tabpanel-overview" aria-labelledby="tab-overview">
                 <ExecDashboard />
                 <ProjectInfo />
             </TabContent>
 
             {/* Tab: Token Analysis */}
-            <TabContent $active={activeTab === 'tokens'} role="tabpanel">
+            <TabContent $active={activeTab === 'tokens'} role="tabpanel" id="tabpanel-tokens" aria-labelledby="tab-tokens">
                 <Section>
                     <TokenizerInput
                         analysis={tokenAnalysis}
@@ -152,7 +154,7 @@ function App() {
             </TabContent>
 
             {/* Tab: Benchmarks */}
-            <TabContent $active={activeTab === 'benchmarks'} role="tabpanel">
+            <TabContent $active={activeTab === 'benchmarks'} role="tabpanel" id="tabpanel-benchmarks" aria-labelledby="tab-benchmarks">
                 <Section>
                     <BenchmarkMode />
                 </Section>
@@ -162,7 +164,7 @@ function App() {
             </TabContent>
 
             {/* Tab: Cost & Economics */}
-            <TabContent $active={activeTab === 'costs'} role="tabpanel">
+            <TabContent $active={activeTab === 'costs'} role="tabpanel" id="tabpanel-costs" aria-labelledby="tab-costs">
                 <Section>
                     <ProviderComparison />
                 </Section>
@@ -187,7 +189,7 @@ function App() {
             </TabContent>
 
             {/* Tab: Results & Export */}
-            <TabContent $active={activeTab === 'results'} role="tabpanel">
+            <TabContent $active={activeTab === 'results'} role="tabpanel" id="tabpanel-results" aria-labelledby="tab-results">
                 <Section>
                     <Gamification
                         monthlyTokens={monthlyTokens}
