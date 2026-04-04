@@ -194,7 +194,59 @@ Keys are built via `buildCacheKey(stepName, inputs, model, params)` using `stabl
 
 Default TTL: **5 minutes** (both tiers).
 
-## 8. CI/CD Pipeline
+## 8. Reporting & Export Architecture
+
+The application provides two reporting paths: real-time **ELU score benchmarks** in the UI, and on-demand **document exports** (PDF and CSV).
+
+### ELU Scores — Definition & Computation
+
+ELU stands for **Efficiency, Latency, Utilization** — the three dimensions used to measure workflow gains:
+
+| Dimension | Measures | Derived From |
+|-----------|----------|-------------|
+| **E — Efficiency** | Token reduction % | `(monolithicTokens − agenticTokens) / monolithicTokens × 100` |
+| **L — Latency** | Processing time reduction % | Pre-computed per benchmark (`improvement.latency`) or inferred from `time` strings |
+| **U — Utilization** | Cost reduction % | `(monolithicCost − agenticCost) / monolithicCost × 100` (= E-score when price is constant) |
+
+ELU scores are **static** for the pre-loaded benchmarks in `BenchmarkMode.jsx` and **dynamic** for the live tokenizer analysis (`TokenizerInput.jsx` → `tokenAnalysis.reduction`).
+
+### Export Data Flow
+
+```
+User clicks "Export to PDF"
+    │
+    ├── ExportTools.exportToPDF()
+    │       │
+    │       ├── calculateCost(monolithicTokens, pricePerThousand)
+    │       ├── calculateSavings(monolithicCost, agenticCost)
+    │       ├── build off-screen HTML report (cost tables, projections, recs)
+    │       ├── html2canvas(div, { scale: 2 })  ──► PNG canvas
+    │       ├── jsPDF → addImage(PNG) → pdf.save('*.pdf')
+    │       └── remove off-screen div
+    │
+    └── ExportTools.exportToCSV()
+            │
+            ├── calculateCost + calculateSavings
+            ├── build CSV rows (metrics + monthly projections at 3 scales)
+            └── Blob → URL.createObjectURL → link.click() → download
+
+```
+
+### Report Content Matrix
+
+| Section | PDF | CSV |
+|---------|-----|-----|
+| Executive summary | ✅ | ✗ |
+| Token usage comparison table | ✅ | ✅ |
+| Cost per request | ✅ | ✅ |
+| Monthly projections (1M / 10M / 100M) | ✅ | ✅ |
+| Recommendations | ✅ | ✗ |
+| ELU score badges | ✗ | ✗ (in Benchmark UI only) |
+| Run trace data | ✗ | ✗ (in RunTrace UI only) |
+
+> Run traces and ELU scores are observability artefacts visible in the UI. They are not currently included in exports; adding them is a planned future enhancement.
+
+## 9. CI/CD Pipeline
 
 ```
 Push / PR

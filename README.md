@@ -77,6 +77,18 @@ Runs the full Vitest suite (62 tests covering calculations, workflow engine, sch
 
 ## 📊 How It Works
 
+### ELU Scores — Efficiency, Latency, Utilization
+
+The application measures workflow gains across three dimensions:
+
+| Dimension | Formula | Example (RAG benchmark) |
+|-----------|---------|------------------------|
+| **E — Efficiency** | `(monoTokens − agenticTokens) / monoTokens × 100` | **70%** token reduction |
+| **L — Latency** | `(monoTime − agenticTime) / monoTime × 100` | **48%** faster (3.5s → 1.8s) |
+| **U — Utilization** | `(monoCost − agenticCost) / monoCost × 100` | **70%** cost reduction |
+
+ELU scores for the live tokenizer are computed dynamically from `tokenAnalysis.reduction`. The three pre-loaded benchmarks (Document Summarization, Email Classification, RAG Q&A) display static ELU scores in the Benchmark Mode panel.
+
 ### Agentic Pipeline
 
 The app demonstrates a modular agentic workflow with 5 specialized agents:
@@ -125,9 +137,9 @@ At scale (100M tokens/month):
 
 For a detailed overview of the application's architecture, please see the following documents:
 
-- **[High-Level Design (HLD)](./docs/hdl.md)**: An overview of the system architecture, components, and data flow.
-- **[Low-Level Design (LLD)](./docs/lld.md)**: A detailed look at the implementation of key components and logic.
-- **[Sequence Diagrams](./docs/sequence-diagrams.md)**: Mermaid sequence diagrams for the core runtime flows.
+- **[High-Level Design (HLD)](./docs/hdl.md)**: Architecture overview, component map, data flow, ELU score computation, reporting & export architecture, guard/cache diagrams, and CI/CD pipeline.
+- **[Low-Level Design (LLD)](./docs/lld.md)**: Utility module APIs, component internals, ELU benchmark data model, export formats (PDF/CSV), schema, and test coverage.
+- **[Sequence Diagrams](./docs/sequence-diagrams.md)**: 12 Mermaid sequence diagrams covering the full runtime — prompt analysis, cache hit/miss, retry, loop guard, cancellation, schema repair, run trace, PDF export, CSV export, ELU score display, achievement unlock, and CI/CD.
 
 ## 📁 Project Structure
 

@@ -273,3 +273,157 @@ sequenceDiagram
         Pages-->>Dev: live at https://<org>.github.io/<repo>/
     end
 ```
+
+---
+
+## 9. PDF Export Flow
+
+How the "Export to PDF" button produces a downloadable report.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as ExportTools
+    participant Calc as calculations.js
+    participant DOM as Document DOM
+    participant Canvas as html2canvas
+    participant PDF as jsPDF
+
+    User->>UI: clicks "Export to PDF"
+    UI->>UI: setIsExporting(true) — disables button
+
+    UI->>Calc: calculateCost(monolithicTokens, pricePerThousand)
+    Calc-->>UI: monolithicCost
+
+    UI->>Calc: calculateCost(agenticTotalTokens, pricePerThousand)
+    Calc-->>UI: agenticCost
+
+    UI->>Calc: calculateSavings(monolithicCost, agenticCost)
+    Calc-->>UI: { amount, percentage }
+
+    UI->>DOM: createElement('div') — off-screen at left:-9999px
+    UI->>DOM: inject HTML (exec summary, token table, projection table, recs)
+    UI->>DOM: document.body.appendChild(div)
+
+    UI->>Canvas: html2canvas(div, { scale: 2, useCORS: true })
+    Canvas-->>UI: canvas (PNG rasterised at 2× resolution)
+
+    UI->>DOM: document.body.removeChild(div)
+
+    UI->>PDF: new jsPDF('p', 'mm', 'a4')
+    UI->>PDF: addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210mm, h)
+    UI->>PDF: pdf.save('agentic-workflow-analysis.pdf')
+    PDF-->>User: browser download prompt
+
+    UI->>UI: setIsExporting(false) — re-enables button
+
+    alt html2canvas or jsPDF throws
+        UI->>UI: console.error(error)
+        UI->>User: alert('Failed to export PDF. Please try again.')
+        UI->>UI: setIsExporting(false)
+    end
+```
+
+---
+
+## 10. CSV Export Flow
+
+How the "Export to CSV" button produces a downloadable spreadsheet.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as ExportTools
+    participant Calc as calculations.js
+    participant DOM as Document DOM
+
+    User->>UI: clicks "Export to CSV"
+
+    UI->>Calc: calculateCost(monolithicTokens, pricePerThousand)
+    UI->>Calc: calculateCost(agenticTotalTokens, pricePerThousand)
+    UI->>Calc: calculateSavings(monolithicCost, agenticCost)
+    Calc-->>UI: { amount, percentage }
+
+    UI->>UI: build csvContent[][]
+    Note over UI: Row groups: header, blank, metric rows,<br/>blank, monthly projection rows (1M/10M/100M)
+
+    UI->>DOM: new Blob([csvContent], {type:'text/csv'})
+    UI->>DOM: URL.createObjectURL(blob)
+    UI->>DOM: createElement('a') — href=url, download='*.csv'
+    UI->>DOM: document.body.appendChild(a)
+    UI->>DOM: a.click()
+    DOM-->>User: browser download prompt
+    UI->>DOM: document.body.removeChild(a)
+```
+
+---
+
+## 11. ELU Score Display Flow (BenchmarkMode)
+
+How selecting a benchmark renders its Efficiency, Latency, and Utilization scores.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as BenchmarkMode
+    participant Data as benchmarks[] (static)
+
+    Note over Data: 3 pre-loaded benchmark objects:<br/>summarization, classification, rag
+    Note over Data: Each has monolithic{}, agentic{}, improvement{}
+
+    UI->>UI: useState(benchmarks[0]) — default: summarization
+
+    User->>UI: clicks "Email Classification" tab
+    UI->>UI: setSelected(benchmarks[1])
+    UI->>UI: re-render
+
+    Note over UI: Monolithic card shows:<br/>tokens=500,000 / cost=$1.00 / time=15m / accuracy=82%
+    Note over UI: Agentic card shows:<br/>tokens=150,000 / cost=$0.30 / time=3m / accuracy=94%
+
+    UI->>UI: render E-score badge: improvement.tokens = '70%'
+    UI->>UI: render U-score badge: improvement.cost   = '70%'
+    Note over UI: L-score (latency) not surfaced as badge<br/>for this benchmark (only RAG has improvement.latency)
+
+    User->>UI: clicks "RAG Q&A System" tab
+    UI->>UI: setSelected(benchmarks[2])
+
+    UI->>UI: render E-score badge: '70%'
+    UI->>UI: render U-score badge: '70%'
+    UI->>UI: render L-score (latency): improvement.latency = '48%'
+    Note over UI: RAG is the only benchmark where<br/>all three ELU dimensions are shown
+```
+
+---
+
+## 12. Gamification Achievement Unlock Flow
+
+How achievement badges are evaluated and displayed as the user adjusts usage inputs.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as App.jsx
+    participant GI as ScenarioInput
+    participant GM as Gamification
+
+    User->>GI: changes Monthly Tokens to 2,000,000
+    GI->>App: onMonthlyTokensChange(2_000_000)
+    App->>App: setMonthlyTokens(2_000_000)
+    App->>GM: re-render with monthlyTokens=2M, pricePerThousand
+
+    GM->>GM: tokensSaved = 2_000_000 × 0.60 = 1_200_000
+    GM->>GM: savingsAmount = (2M/1000) × 0.002 × 0.60 = $2.40
+
+    GM->>GM: useEffect([tokensSaved, savingsAmount])
+
+    loop achievementsList
+        GM->>GM: token_novice: 1_200_000 ≥ 1_000 ✅ unlock
+        GM->>GM: cost_cutter: $2.40 < $100 ✗ locked
+        GM->>GM: architect: hasCustomScenario=true ✅ unlock
+        GM->>GM: optimizer_elite: 1_200_000 ≥ 1_000_000 ✅ unlock
+    end
+
+    GM->>GM: setUnlocked(['token_novice', 'architect', 'optimizer_elite'])
+    GM->>User: renders 3 gold badges + 1 greyed badge
+    GM->>User: stats bar: "Tokens Saved: 1,200,000 | Monthly Savings: $2.40"
+```

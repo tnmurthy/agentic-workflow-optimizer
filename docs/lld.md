@@ -422,7 +422,173 @@ interface Agent {
 
 ---
 
-## 5. Test Coverage
+## 5. Reporting & Export
+
+### 5.1 `ExportTools.jsx`
+
+Provides two export paths for sharing analysis results with stakeholders.
+
+#### Props
+
+| Prop | Type | Purpose |
+|------|------|---------|
+| `pricePerThousand` | `number` | Current $/1K token price; embedded in both export outputs |
+
+#### PDF Export (`exportToPDF`)
+
+1. Sets `isExporting = true` to disable the button and show a loading label.
+2. Creates an off-screen `<div>` (positioned at `left: -9999px`) and injects a fully self-contained HTML report.
+3. Calls `html2canvas` (scale: 2×) to rasterise the HTML to a PNG canvas.
+4. Wraps the PNG in a `jsPDF` A4 document and triggers download as `agentic-workflow-analysis.pdf`.
+5. Removes the off-screen `<div>` and resets `isExporting`.
+6. On error: logs to `console.error` and shows a browser `alert`.
+
+**PDF report sections:**
+
+| Section | Content |
+|---------|---------|
+| Executive Summary | Narrative overview of the approach |
+| Token Usage Comparison | Table: Approach / Tokens / Cost per Request / Savings row |
+| Cost Projections | Table: 1M / 10M / 100M tokens per month with monolithic, agentic, and monthly savings columns |
+| Recommendations | Bulleted action items for implementation |
+| Footer | Generator attribution + timestamp |
+
+#### CSV Export (`exportToCSV`)
+
+Builds a `\n`-separated CSV string and triggers download as `agentic-workflow-analysis.csv`.
+
+**CSV schema:**
+
+```
+Agentic Workflow Analysis Report
+Generated: <timestamp>
+
+Metric, Monolithic, Agentic, Savings
+Tokens per Request, <n>, <n>, <n>
+Cost per Request, <$>, <$>, <$>
+Reduction %, , , <n>%
+
+Monthly Projections (Price per 1K tokens: $<p>)
+Tokens/Month, Monolithic Cost, Agentic Cost, Monthly Savings
+1,000,000, <$>, <$>, <$>
+10,000,000, <$>, <$>, <$>
+100,000,000, <$>, <$>, <$>
+```
+
+#### Error Handling
+
+| Failure Mode | Handling |
+|-------------|---------|
+| `html2canvas` throws | `console.error` + `alert('Failed to export PDF...')` |
+| `localStorage` quota in CSV | N/A (CSV is in-memory only; no storage involved) |
+| `jsPDF` not loaded | Caught by outer `try/catch` |
+
+---
+
+### 5.2 `BenchmarkMode.jsx` — Benchmark Data Model & ELU Scores
+
+#### ELU Score Dimensions
+
+ELU stands for **Efficiency, Latency, Utilization** — the three axes used to measure agentic workflow performance gains against a monolithic baseline:
+
+| Dimension | Description | Unit | Example |
+|-----------|-------------|------|---------|
+| **E — Efficiency** | Reduction in total token count | Percentage (%) | `66%` for Document Summarization |
+| **L — Latency** | Reduction in end-to-end processing time | Percentage (%) | `48%` for RAG Q&A (parallel execution) |
+| **U — Utilization** | Reduction in monetary cost at equivalent throughput | Percentage (%) | `70%` for Email Classification |
+
+Each benchmark also carries a **quality dimension** that is scenario-specific:
+
+| Scenario | Quality Dimension | Monolithic | Agentic |
+|----------|------------------|------------|---------|
+| Document Summarization | Output quality | Generic summary, missed details | Structured extraction, 100% key-point retention |
+| Email Classification | Accuracy | 82% | 94% (+12 pp) |
+| RAG Q&A | Hallucination risk | Medium | Zero (verified citations) |
+
+#### Benchmark Data Model
+
+Each benchmark object has the following shape:
+
+```ts
+interface Benchmark {
+  id:          string;          // 'summarization' | 'classification' | 'rag'
+  name:        string;          // Display name
+  icon:        ReactNode;
+  description: string;          // Short scenario description
+
+  monolithic: {
+    tokens:       number;        // Token count for the monolithic approach
+    cost:         number;        // Dollar cost per request
+    time:         string;        // Human-readable processing time
+    quality?:     string;        // Qualitative output assessment
+    accuracy?:    string;        // Accuracy label (classification only)
+    hallucination?: string;      // Hallucination risk label (RAG only)
+  };
+
+  agentic: {
+    tokens:       number;
+    cost:         number;
+    time:         string;        // Includes '(parallel)' note where applicable
+    quality?:     string;
+    accuracy?:    string;
+    hallucination?: string;
+  };
+
+  improvement: {
+    tokens:    string;           // E-score: token reduction %
+    cost:      string;           // U-score: cost reduction %
+    latency?:  string;           // L-score: latency reduction % (RAG only)
+    accuracy?: string;           // Quality delta (classification only)
+    quality?:  string;           // Qualitative tag (summarization only)
+  };
+}
+```
+
+#### Pre-loaded Benchmarks
+
+| ID | Scenario | E-Score (Token Δ) | L-Score (Latency Δ) | U-Score (Cost Δ) |
+|----|----------|-------------------|---------------------|-----------------|
+| `summarization` | 50-page technical spec | **−66%** | 45s → 12s (−73%) | **−66%** |
+| `classification` | 1,000 support tickets | **−70%** | 15m → 3m (−80%) | **−70%** |
+| `rag` | 1 GB knowledge base Q&A | **−70%** | 3.5s → 1.8s (**−48%**) | **−70%** |
+
+> **Note:** Only the RAG benchmark explicitly surfaces the L-score in the `improvement.latency` field. Latency data for summarization and classification is embedded in the `time` strings.
+
+#### Component State
+
+| Variable | Type | Purpose |
+|----------|------|---------|
+| `selected` | `Benchmark` | The currently active benchmark; initialised to `benchmarks[0]` (summarization) |
+
+Selecting a different benchmark calls `setSelected(b)`, which triggers a re-render showing the new monolithic/agentic cards and ELU score badges.
+
+---
+
+### 5.3 `Gamification.jsx` — Achievement Scoring
+
+Gamification computes a simple running score from the global state and unlocks badges when thresholds are crossed.
+
+#### Achievement Thresholds
+
+| ID | Title | Dimension | Threshold |
+|----|-------|-----------|-----------|
+| `token_novice` | Token Novice | Tokens saved | ≥ 1,000 |
+| `cost_cutter` | Cost Cutter | Monthly savings | ≥ $100 |
+| `architect` | Workflow Architect | Custom scenarios created | ≥ 1 |
+| `optimizer_elite` | Optimizer Elite | Tokens saved | ≥ 1,000,000 |
+
+#### Score Calculation
+
+```
+tokensSaved   = monthlyTokens × 0.60          (assumes 60% agentic reduction)
+savingsAmount = (monthlyTokens / 1000) × pricePerThousand × 0.60
+```
+
+Badges are evaluated on every render via `useEffect([tokensSaved, savingsAmount])`.
+
+---
+
+## 6. Test Coverage
 
 | Test File | Scope | Tests |
 |-----------|-------|-------|
