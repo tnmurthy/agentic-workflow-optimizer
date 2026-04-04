@@ -102,7 +102,7 @@ function TraceItem({ trace }) {
 
     return (
         <div className="trace-item">
-            <div className="trace-header" onClick={() => setExpanded(e => !e)}>
+            <div className="trace-header" onClick={() => setExpanded(prev => !prev)}>
                 <div className="trace-meta">
                     <span className={`status-dot ${trace.ok ? 'ok' : 'fail'}`} />
                     <strong>{trace.runName}</strong>

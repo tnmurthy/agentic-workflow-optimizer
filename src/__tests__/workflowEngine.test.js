@@ -50,11 +50,6 @@ describe('LoopGuard', () => {
         guard.tick(); // 1
         guard.tick(); // 2
         expect(() => guard.tick()).toThrow(); // 3 > 2
-        try {
-            new LoopGuard({ maxIterations: 2, maxToolCalls: 100, maxWallClockMs: 99999 }).tick().tick().tick();
-        } catch (err) {
-            // just ensure we can reach here
-        }
         const err = (() => {
             try { guard.tick(); } catch (e) { return e; }
         })();
