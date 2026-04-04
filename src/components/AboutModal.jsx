@@ -66,9 +66,9 @@ const Tab = styled.button`
     padding: 0.75rem 1.25rem;
     background: none;
     border: none;
-    border-bottom: 2px solid ${({ active }) => (active ? 'var(--accent-primary)' : 'transparent')};
-    color: ${({ active }) => (active ? 'var(--accent-primary)' : 'var(--text-secondary)')};
-    font-weight: ${({ active }) => (active ? '700' : '500')};
+    border-bottom: 2px solid ${({ $active }) => ($active ? 'var(--accent-primary)' : 'transparent')};
+    color: ${({ $active }) => ($active ? 'var(--accent-primary)' : 'var(--text-secondary)')};
+    font-weight: ${({ $active }) => ($active ? '700' : '500')};
     font-size: 0.875rem;
     cursor: pointer;
     white-space: nowrap;
@@ -578,7 +578,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                     {tabs.map(tab => (
                         <Tab
                             key={tab.id}
-                            active={activeTab === tab.id}
+                            $active={activeTab === tab.id}
                             onClick={() => setActiveTab(tab.id)}
                         >
                             {tab.icon}

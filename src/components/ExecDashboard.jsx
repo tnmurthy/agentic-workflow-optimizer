@@ -32,7 +32,7 @@ const KpiCard = styled.div`
     background: var(--bg-tertiary);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);
-    border-left: 4px solid ${({ accentColor }) => accentColor || 'var(--accent-primary)'};
+    border-left: 4px solid ${({ $accentColor }) => $accentColor || 'var(--accent-primary)'};
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -41,7 +41,7 @@ const KpiCard = styled.div`
 const KpiValue = styled.div`
     font-size: 2rem;
     font-weight: 800;
-    color: ${({ accentColor }) => accentColor || 'var(--text-primary)'};
+    color: ${({ $accentColor }) => $accentColor || 'var(--text-primary)'};
     line-height: 1;
 `;
 
@@ -235,9 +235,9 @@ const ExecDashboard = () => {
                 <SectionLabel>Key Performance Indicators</SectionLabel>
                 <KpiGrid>
                     {kpis.map((kpi, i) => (
-                        <KpiCard key={i} accentColor={kpi.color}>
+                        <KpiCard key={i} $accentColor={kpi.color}>
                             <div style={{ color: kpi.color, marginBottom: '0.25rem' }}>{kpi.icon}</div>
-                            <KpiValue accentColor={kpi.color}>{kpi.value}</KpiValue>
+                            <KpiValue $accentColor={kpi.color}>{kpi.value}</KpiValue>
                             <KpiLabel>{kpi.label}</KpiLabel>
                             <KpiSub>{kpi.sub}</KpiSub>
                         </KpiCard>
