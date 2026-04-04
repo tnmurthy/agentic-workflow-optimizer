@@ -149,10 +149,7 @@ const DiagramContainer = styled.div`
     }
 `;
 
-const LogicFlow = () => {
-    const chartRef = useRef(null);
-
-    const diagramDefinition = `
+const PIPELINE_DIAGRAM = `
 flowchart TB
   P["Prompt<br/>(User input)"] --> T["Tokenization<br/>(tokenize → t001..t120)"]
   T --> TOK["Tokens Pool<br/>tokens: t001..t120 (120)"]
@@ -178,7 +175,10 @@ flowchart TB
 
   AGG --> FINAL["Final Response Assembly<br/>detokenize m001..m030 → final_text<br/>post-process & safety checks"]
   FINAL --> OUT["Output to user<br/>final token footprint: 30 tokens"]
-    `;
+`;
+
+const LogicFlow = () => {
+    const chartRef = useRef(null);
 
     useEffect(() => {
         mermaid.initialize({
@@ -198,7 +198,7 @@ flowchart TB
         const renderDiagram = async () => {
             if (chartRef.current) {
                 try {
-                    const { svg } = await mermaid.render('workflow-pipeline-diagram', diagramDefinition.trim());
+                    const { svg } = await mermaid.render('workflow-pipeline-diagram', PIPELINE_DIAGRAM.trim());
                     chartRef.current.innerHTML = svg;
                 } catch (error) {
                     console.error('Mermaid render error:', error);
@@ -207,7 +207,7 @@ flowchart TB
         };
 
         renderDiagram();
-    }, [diagramDefinition]);
+    }, []);
 
     return (
         <Container>
