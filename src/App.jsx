@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BookOpen } from 'lucide-react';
 import Header from './components/Header';
+import ExecDashboard from './components/ExecDashboard';
 import WorkflowDiagram from './components/WorkflowDiagram';
 import TokenComparison from './components/TokenComparison';
 import CostCalculator from './components/CostCalculator';
@@ -36,7 +37,7 @@ const Footer = styled.footer`
     margin-top: var(--spacing-xl);
     padding: var(--spacing-lg);
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--glass-border);
 `;
 
 const FooterHeading = styled.p`
@@ -65,6 +66,9 @@ function App() {
 
             {/* Header */}
             <Header onAboutClick={() => setIsAboutOpen(true)} />
+
+            {/* Executive Dashboard */}
+            <ExecDashboard />
 
             {/* 1. Context: Project Info */}
             <ProjectInfo />

@@ -148,17 +148,17 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             legend: {
                 display: true,
                 labels: {
-                    color: '#a0aec0',
+                    color: '#475569',
                     font: {
                         size: 12,
                     },
                 },
             },
             tooltip: {
-                backgroundColor: 'rgba(26, 34, 53, 0.95)',
+                backgroundColor: 'rgba(15, 23, 42, 0.92)',
                 titleColor: '#fff',
-                bodyColor: '#a0aec0',
-                borderColor: 'rgba(99, 102, 241, 0.5)',
+                bodyColor: '#CBD5E1',
+                borderColor: 'rgba(2, 132, 199, 0.4)',
                 borderWidth: 1,
                 padding: 12,
                 callbacks: {
@@ -172,10 +172,10 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: 'rgba(71, 85, 105, 0.12)',
                 },
                 ticks: {
-                    color: '#a0aec0',
+                    color: '#475569',
                     callback: function (value) {
                         return '$' + (value / 1000).toFixed(0) + 'k';
                     }
@@ -183,10 +183,10 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             },
             x: {
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: 'rgba(71, 85, 105, 0.12)',
                 },
                 ticks: {
-                    color: '#a0aec0',
+                    color: '#475569',
                 },
             },
         },
@@ -199,17 +199,17 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             legend: {
                 display: true,
                 labels: {
-                    color: '#a0aec0',
+                    color: '#475569',
                     font: {
                         size: 12,
                     },
                 },
             },
             tooltip: {
-                backgroundColor: 'rgba(26, 34, 53, 0.95)',
+                backgroundColor: 'rgba(15, 23, 42, 0.92)',
                 titleColor: '#fff',
-                bodyColor: '#a0aec0',
-                borderColor: 'rgba(99, 102, 241, 0.5)',
+                bodyColor: '#CBD5E1',
+                borderColor: 'rgba(2, 132, 199, 0.4)',
                 borderWidth: 1,
                 padding: 12,
                 callbacks: {
@@ -223,10 +223,10 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: 'rgba(71, 85, 105, 0.12)',
                 },
                 ticks: {
-                    color: '#a0aec0',
+                    color: '#475569',
                     callback: function (value) {
                         return '$' + (value / 1000).toFixed(0) + 'k';
                     }
@@ -234,10 +234,10 @@ const ProjectionCharts = ({ pricePerThousand }) => {
             },
             x: {
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: 'rgba(71, 85, 105, 0.12)',
                 },
                 ticks: {
-                    color: '#a0aec0',
+                    color: '#475569',
                 },
             },
         },

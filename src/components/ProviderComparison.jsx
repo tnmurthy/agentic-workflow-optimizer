@@ -234,7 +234,7 @@ const ProviderComparison = () => {
                                         <tr
                                             key={`${model.providerId}-${model.id}`}
                                             style={{
-                                                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                                                borderBottom: '1px solid var(--glass-border)',
                                                 background: selectedProvider === model.providerId && selectedModel === model.id
                                                     ? 'rgba(99, 102, 241, 0.1)'
                                                     : 'transparent'

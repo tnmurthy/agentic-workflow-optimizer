@@ -74,7 +74,7 @@ const CostCalculator = ({ pricePerThousand, onPriceChange }) => {
                     textAlign: 'center'
                 }}>
                     <div className="flex items-center justify-center gap-sm mb-sm">
-                        <TrendingUp size={32} />
+                        <TrendingUp size={32} color="white" />
                         <h3 style={{ fontSize: '1.5rem', marginBottom: 0, color: 'white' }}>Cost Savings</h3>
                     </div>
                     <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>

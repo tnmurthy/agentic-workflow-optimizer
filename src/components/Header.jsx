@@ -6,6 +6,7 @@ const HeaderCard = styled.header`
     background: var(--gradient-primary);
     margin-bottom: var(--spacing-xl);
     position: relative;
+    border-color: rgba(3, 105, 161, 0.3);
 `;
 
 const AboutButton = styled.button`
@@ -14,10 +15,27 @@ const AboutButton = styled.button`
     right: 1rem;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    &:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+        border-color: rgba(255, 255, 255, 0.5) !important;
+        color: white !important;
+    }
+`;
+
+const WorkflowIcon = styled(Workflow)`
+    color: rgba(255, 255, 255, 0.9);
 `;
 
 const Title = styled.h1`
     margin-bottom: 0.5rem;
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: white;
+    background-clip: unset;
+    color: white;
 `;
 
 const Subtitle = styled.p`
@@ -38,13 +56,13 @@ const Header = ({ onAboutClick }) => {
         <HeaderCard className="card">
             <AboutButton
                 onClick={onAboutClick}
-                className="btn btn-secondary"
+                className="btn"
             >
                 <BookOpen size={16} />
                 About Project
             </AboutButton>
             <div className="flex items-center gap-md mb-md">
-                <Workflow size={48} />
+                <WorkflowIcon size={48} />
                 <div>
                     <Title>Agentic Workflow Token Optimizer</Title>
                     <Subtitle>
