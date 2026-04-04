@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import { BookOpen } from 'lucide-react';
 import Header from './components/Header';
@@ -9,16 +9,18 @@ import ProjectionCharts from './components/ProjectionCharts';
 import ScenarioInput from './components/ScenarioInput';
 import TokenizerInput from './components/TokenizerInput';
 import ProviderComparison from './components/ProviderComparison';
-import ExportTools from './components/ExportTools';
 import ScenarioBuilder from './components/ScenarioBuilder';
 import BenchmarkMode from './components/BenchmarkMode';
-import Gamification from './components/Gamification';
 import AboutModal from './components/AboutModal';
 import ProjectInfo from './components/ProjectInfo';
 import TokenFlowSankey from './components/TokenFlowSankey';
 import CostBreakdownSankey from './components/CostBreakdownSankey';
-import RunTrace from './components/RunTrace';
+import ErrorBoundary from './components/ErrorBoundary';
 import { defaultPricing } from './data/workflowData';
+
+const Gamification = lazy(() => import('./components/Gamification'));
+const ExportTools = lazy(() => import('./components/ExportTools'));
+const RunTrace = lazy(() => import('./components/RunTrace'));
 
 const AppContainer = styled.div`
     // No specific styles needed here as .container handles it
@@ -60,6 +62,7 @@ function App() {
     const [tokenAnalysis, setTokenAnalysis] = useState(null); // Lifted state for token analysis
 
     return (
+        <ErrorBoundary>
         <AppContainer className="container">
             <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
 
@@ -67,85 +70,121 @@ function App() {
             <Header onAboutClick={() => setIsAboutOpen(true)} />
 
             {/* 1. Context: Project Info */}
-            <ProjectInfo />
+            <ErrorBoundary>
+                <ProjectInfo />
+            </ErrorBoundary>
 
             {/* 2. Interactive Learning: What is a Token? */}
             <Section>
-                <TokenizerInput
-                    analysis={tokenAnalysis}
-                    onAnalysisChange={setTokenAnalysis}
-                />
+                <ErrorBoundary>
+                    <TokenizerInput
+                        analysis={tokenAnalysis}
+                        onAnalysisChange={setTokenAnalysis}
+                    />
+                </ErrorBoundary>
             </Section>
 
             {/* 2.5. Token Flow Visualization */}
             <Section>
-                <TokenFlowSankey tokenAnalysis={tokenAnalysis} />
+                <ErrorBoundary>
+                    <TokenFlowSankey tokenAnalysis={tokenAnalysis} />
+                </ErrorBoundary>
             </Section>
 
             {/* 3. The Concept: Visualizing the Workflow */}
-            <WorkflowDiagram />
+            <ErrorBoundary>
+                <WorkflowDiagram />
+            </ErrorBoundary>
 
             {/* 4. The Proof: Token Comparison */}
             <Section>
-                <TokenComparison />
+                <ErrorBoundary>
+                    <TokenComparison />
+                </ErrorBoundary>
             </Section>
 
             {/* 5. Real Examples: Benchmark Mode */}
             <Section>
-                <BenchmarkMode />
+                <ErrorBoundary>
+                    <BenchmarkMode />
+                </ErrorBoundary>
             </Section>
 
             {/* 6. Deep Dive: Scenario Builder */}
             <Section>
-                <ScenarioBuilder />
+                <ErrorBoundary>
+                    <ScenarioBuilder />
+                </ErrorBoundary>
             </Section>
 
             {/* 7. Economics: Provider Comparison */}
             <Section>
-                <ProviderComparison />
+                <ErrorBoundary>
+                    <ProviderComparison />
+                </ErrorBoundary>
             </Section>
 
             {/* 8. Business Case: Cost Calculator */}
             <GridSection className="grid grid-2 gap-lg">
-                <CostCalculator
-                    pricePerThousand={pricePerThousand}
-                    onPriceChange={setPricePerThousand}
-                />
-                <ScenarioInput
-                    monthlyRequests={monthlyRequests}
-                    onMonthlyRequestsChange={setMonthlyRequests}
-                    monthlyTokens={monthlyTokens}
-                    onMonthlyTokensChange={setMonthlyTokens}
-                />
+                <ErrorBoundary>
+                    <CostCalculator
+                        pricePerThousand={pricePerThousand}
+                        onPriceChange={setPricePerThousand}
+                    />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                    <ScenarioInput
+                        monthlyRequests={monthlyRequests}
+                        onMonthlyRequestsChange={setMonthlyRequests}
+                        monthlyTokens={monthlyTokens}
+                        onMonthlyTokensChange={setMonthlyTokens}
+                    />
+                </ErrorBoundary>
             </GridSection>
 
             {/* 9. Long-term Value: Projections */}
             <Section>
-                <ProjectionCharts pricePerThousand={pricePerThousand} />
+                <ErrorBoundary>
+                    <ProjectionCharts pricePerThousand={pricePerThousand} />
+                </ErrorBoundary>
             </Section>
 
             {/* 9.5. Cost Flow Analysis */}
             <Section>
-                <CostBreakdownSankey />
+                <ErrorBoundary>
+                    <CostBreakdownSankey />
+                </ErrorBoundary>
             </Section>
 
             {/* 10. Engagement: Gamification */}
             <Section>
-                <Gamification
-                    monthlyTokens={monthlyTokens}
-                    monthlyRequests={monthlyRequests}
-                    pricePerThousand={pricePerThousand}
-                />
+                <ErrorBoundary>
+                    <Suspense fallback={null}>
+                        <Gamification
+                            monthlyTokens={monthlyTokens}
+                            monthlyRequests={monthlyRequests}
+                            pricePerThousand={pricePerThousand}
+                        />
+                    </Suspense>
+                </ErrorBoundary>
             </Section>
 
             {/* 11. Action: Export */}
             <Section>
-                <ExportTools pricePerThousand={pricePerThousand} />
+                <ErrorBoundary>
+                    <Suspense fallback={null}>
+                        <ExportTools pricePerThousand={pricePerThousand} />
+                    </Suspense>
+                </ErrorBoundary>
             </Section>
 
             {/* 12. Observability: Run Traces */}
             <Section>
-                <RunTrace />
+                <ErrorBoundary>
+                    <Suspense fallback={null}>
+                        <RunTrace />
+                    </Suspense>
+                </ErrorBoundary>
             </Section>
 
             {/* Footer */}
@@ -158,6 +197,7 @@ function App() {
                 </FooterText>
             </Footer>
         </AppContainer>
+        </ErrorBoundary>
     );
 }
 

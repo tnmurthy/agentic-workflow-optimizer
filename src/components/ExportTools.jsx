@@ -26,94 +26,102 @@ const ExportTools = ({ pricePerThousand }) => {
             const agenticCost = calculateCost(agenticTotalTokens, pricePerThousand);
             const savings = calculateSavings(monolithicCost, agenticCost);
 
-            exportContainer.innerHTML = `
-        <div style="font-family: Arial, sans-serif;">
-          <h1 style="color: #6366f1; margin-bottom: 10px;">Agentic Workflow Analysis Report</h1>
-          <p style="color: #666; margin-bottom: 30px;">Generated on ${new Date().toLocaleDateString()}</p>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Executive Summary</h2>
-          <p style="line-height: 1.6;">
-            This report demonstrates the cost savings achieved through agentic workflow architecture
-            compared to traditional monolithic prompt approaches. By breaking down complex tasks into
-            specialized agents, we achieve significant token reduction and cost optimization.
-          </p>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Token Usage Comparison</h2>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="background: #f3f4f6;">
-                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Approach</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Tokens</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Cost per Request</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">Monolithic Prompt</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(monolithicTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(monolithicCost)}</td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">Agentic Pipeline</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(agenticTotalTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(agenticCost)}</td>
-              </tr>
-              <tr style="background: #10b98133; font-weight: bold;">
-                <td style="padding: 12px; border: 1px solid #ddd;">Savings</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(monolithicTokens - agenticTotalTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(savings.amount)} (${savings.percentage.toFixed(1)}%)</td>
-              </tr>
-            </tbody>
-          </table>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Cost Projections</h2>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="background: #f3f4f6;">
-                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Scale</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Monolithic</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Agentic</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Monthly Savings</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">1M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 1000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$2.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 1000000 / agenticTotalTokens) - 2).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">10M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 10000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$20.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 10000000 / agenticTotalTokens) - 20).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">100M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 100000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$200.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 100000000 / agenticTotalTokens) - 200).toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Recommendations</h2>
-          <ul style="line-height: 1.8;">
-            <li>Implement agentic architecture for complex, multi-step workflows</li>
-            <li>Start with high-volume use cases to maximize ROI</li>
-            <li>Monitor per-agent performance and optimize token allocation</li>
-            <li>Consider different LLM providers based on specific agent requirements</li>
-          </ul>
-          
-          <div style="margin-top: 40px; padding: 20px; background: #f9fafb; border-left: 4px solid #6366f1;">
-            <p style="margin: 0; font-size: 14px; color: #666;">
-              Generated by Agentic Workflow Token Optimizer<br>
-              For more information, visit the application dashboard
-            </p>
-          </div>
-        </div>
-      `;
+            // Build the report content using DOM methods to avoid innerHTML injection
+            const wrapper = document.createElement('div');
+            wrapper.style.fontFamily = 'Arial, sans-serif';
+
+            const addEl = (tag, styles, text, parent) => {
+                const el = document.createElement(tag);
+                Object.assign(el.style, styles);
+                if (text !== undefined) el.textContent = text;
+                parent.appendChild(el);
+                return el;
+            };
+
+            addEl('h1', { color: '#6366f1', marginBottom: '10px' }, 'Agentic Workflow Analysis Report', wrapper);
+            addEl('p', { color: '#666', marginBottom: '30px' }, `Generated on ${new Date().toLocaleDateString()}`, wrapper);
+
+            addEl('h2', { color: '#333', marginTop: '30px', marginBottom: '15px' }, 'Executive Summary', wrapper);
+            addEl('p', { lineHeight: '1.6' }, 'This report demonstrates the cost savings achieved through agentic workflow architecture compared to traditional monolithic prompt approaches. By breaking down complex tasks into specialized agents, we achieve significant token reduction and cost optimization.', wrapper);
+
+            const buildTable = (headers, rows, parent) => {
+                const table = document.createElement('table');
+                Object.assign(table.style, { width: '100%', borderCollapse: 'collapse', marginBottom: '20px' });
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.style.background = '#f3f4f6';
+                headers.forEach(({ label, align }) => {
+                    const th = document.createElement('th');
+                    Object.assign(th.style, { padding: '12px', textAlign: align || 'left', border: '1px solid #ddd' });
+                    th.textContent = label;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                rows.forEach(({ cells, rowStyle }) => {
+                    const tr = document.createElement('tr');
+                    if (rowStyle) Object.assign(tr.style, rowStyle);
+                    cells.forEach(({ text, align, cellStyle }) => {
+                        const td = document.createElement('td');
+                        Object.assign(td.style, { padding: '12px', textAlign: align || 'left', border: '1px solid #ddd', ...cellStyle });
+                        td.textContent = text;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                parent.appendChild(table);
+            };
+
+            addEl('h2', { color: '#333', marginTop: '30px', marginBottom: '15px' }, 'Token Usage Comparison', wrapper);
+            buildTable(
+                [{ label: 'Approach' }, { label: 'Tokens', align: 'right' }, { label: 'Cost per Request', align: 'right' }],
+                [
+                    { cells: [{ text: 'Monolithic Prompt' }, { text: formatNumber(monolithicTokens), align: 'right' }, { text: formatCurrency(monolithicCost), align: 'right' }] },
+                    { cells: [{ text: 'Agentic Pipeline' }, { text: formatNumber(agenticTotalTokens), align: 'right' }, { text: formatCurrency(agenticCost), align: 'right' }] },
+                    { rowStyle: { background: '#10b98133', fontWeight: 'bold' }, cells: [{ text: 'Savings' }, { text: formatNumber(monolithicTokens - agenticTotalTokens), align: 'right' }, { text: `${formatCurrency(savings.amount)} (${savings.percentage.toFixed(1)}%)`, align: 'right' }] },
+                ],
+                wrapper
+            );
+
+            addEl('h2', { color: '#333', marginTop: '30px', marginBottom: '15px' }, 'Cost Projections', wrapper);
+            buildTable(
+                [{ label: 'Scale' }, { label: 'Monolithic', align: 'right' }, { label: 'Agentic', align: 'right' }, { label: 'Monthly Savings', align: 'right' }],
+                [
+                    { cells: [{ text: '1M tokens/month' }, { text: `$${(monolithicCost * 1000000 / agenticTotalTokens).toFixed(2)}`, align: 'right' }, { text: '$2.00', align: 'right' }, { text: `$${((monolithicCost * 1000000 / agenticTotalTokens) - 2).toFixed(2)}`, align: 'right', cellStyle: { color: '#10b981' } }] },
+                    { cells: [{ text: '10M tokens/month' }, { text: `$${(monolithicCost * 10000000 / agenticTotalTokens).toFixed(2)}`, align: 'right' }, { text: '$20.00', align: 'right' }, { text: `$${((monolithicCost * 10000000 / agenticTotalTokens) - 20).toFixed(2)}`, align: 'right', cellStyle: { color: '#10b981' } }] },
+                    { cells: [{ text: '100M tokens/month' }, { text: `$${(monolithicCost * 100000000 / agenticTotalTokens).toFixed(2)}`, align: 'right' }, { text: '$200.00', align: 'right' }, { text: `$${((monolithicCost * 100000000 / agenticTotalTokens) - 200).toFixed(2)}`, align: 'right', cellStyle: { color: '#10b981' } }] },
+                ],
+                wrapper
+            );
+
+            addEl('h2', { color: '#333', marginTop: '30px', marginBottom: '15px' }, 'Recommendations', wrapper);
+            const ul = document.createElement('ul');
+            ul.style.lineHeight = '1.8';
+            [
+                'Implement agentic architecture for complex, multi-step workflows',
+                'Start with high-volume use cases to maximize ROI',
+                'Monitor per-agent performance and optimize token allocation',
+                'Consider different LLM providers based on specific agent requirements',
+            ].forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                ul.appendChild(li);
+            });
+            wrapper.appendChild(ul);
+
+            const footer = document.createElement('div');
+            Object.assign(footer.style, { marginTop: '40px', padding: '20px', background: '#f9fafb', borderLeft: '4px solid #6366f1' });
+            const footerP = document.createElement('p');
+            Object.assign(footerP.style, { margin: '0', fontSize: '14px', color: '#666' });
+            footerP.textContent = 'Generated by Agentic Workflow Token Optimizer. For more information, visit the application dashboard.';
+            footer.appendChild(footerP);
+            wrapper.appendChild(footer);
+
+            exportContainer.appendChild(wrapper);
 
             // Convert to canvas
             const canvas = await html2canvas(exportContainer, {
