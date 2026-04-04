@@ -252,7 +252,7 @@ const ExecTab = () => (
                     </p>
                 </MiniCard>
                 <MiniCard>
-                    <MiniCardTitle><CheckCircle size={16} /> RAG Q&amp;A System</MiniCardTitle>
+                    <MiniCardTitle><CheckCircle size={16} /> RAG Q&A System</MiniCardTitle>
                     <p style={{ fontSize: '0.875rem', marginBottom: 0 }}>
                         Token reduction: <strong>70%</strong> | Latency: <strong>−48%</strong> | Hallucinations: <strong>eliminated</strong>
                     </p>
@@ -293,9 +293,9 @@ const HldTab = () => (
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>UI Framework</td><td>React 18</td><td>Component rendering &amp; state management</td></tr>
-                    <tr><td>Build Tool</td><td>Vite 5</td><td>Fast bundling &amp; hot-module replacement</td></tr>
-                    <tr><td>Styling</td><td>styled-components + CSS Variables</td><td>Scoped styles &amp; design tokens</td></tr>
+                    <tr><td>UI Framework</td><td>React 18</td><td>Component rendering & state management</td></tr>
+                    <tr><td>Build Tool</td><td>Vite 5</td><td>Fast bundling & hot-module replacement</td></tr>
+                    <tr><td>Styling</td><td>styled-components + CSS Variables</td><td>Scoped styles & design tokens</td></tr>
                     <tr><td>Visualisations</td><td>Chart.js / react-google-charts</td><td>Bar, line, and Sankey charts</td></tr>
                     <tr><td>Tokenisation</td><td>gpt-tokenizer</td><td>Client-side token counting (no API call)</td></tr>
                     <tr><td>Diagrams</td><td>Mermaid</td><td>Flowcharts rendered in-browser</td></tr>
@@ -329,7 +329,7 @@ const HldTab = () => (
         </Section>
 
         <Section>
-            <SectionTitle><Database size={20} /> Data &amp; State Architecture</SectionTitle>
+            <SectionTitle><Database size={20} /> Data & State Architecture</SectionTitle>
             <TwoCol>
                 <MiniCard>
                     <MiniCardTitle><Database size={15} /> Browser Storage</MiniCardTitle>
@@ -378,8 +378,8 @@ const LldTab = () => (
                 </thead>
                 <tbody>
                     <tr><td><code>calculateCost(tokens, price)</code></td><td>Token cost in dollars: <code>(tokens / 1000) × price</code></td></tr>
-                    <tr><td><code>calculateSavings(mono, agent)</code></td><td>Absolute &amp; % savings; guards division-by-zero</td></tr>
-                    <tr><td><code>calculateTokenReduction(mono, agent)</code></td><td>Token delta &amp; % reduction</td></tr>
+                    <tr><td><code>calculateSavings(mono, agent)</code></td><td>Absolute & % savings; guards division-by-zero</td></tr>
+                    <tr><td><code>calculateTokenReduction(mono, agent)</code></td><td>Token delta & % reduction</td></tr>
                     <tr><td><code>calculateMonthlyProjection(…)</code></td><td>Cost at a given monthly token volume</td></tr>
                     <tr><td><code>calculateMultiYearProjection(years, …)</code></td><td>Cumulative 1–5 year savings array</td></tr>
                 </tbody>
@@ -464,7 +464,7 @@ const FlowsTab = () => (
                 { label: 'Step 1: tokenize', detail: 'gpt-tokenizer encodes the prompt locally. No network call. Returns token IDs.' },
                 { label: 'Step 2: distribute', detail: 'Allocate tokens proportionally across 5 agents; compute reduction percentage.' },
                 { label: 'Step 3: validate', detail: 'schemaValidator checks the result. Auto-repairs coercible values. Throws on unrecoverable errors.' },
-                { label: 'Trace &amp; cache', detail: 'RunTracer redacts sensitive fields and persists the trace. Result is written to both cache tiers.' },
+                { label: 'Trace & cache', detail: 'RunTracer redacts sensitive fields and persists the trace. Result is written to both cache tiers.' },
                 { label: 'UI update', detail: 'Token breakdown, Sankey diagram, and all downstream charts update instantly.' },
             ].map((step, i) => (
                 <FlowStep key={i}>
@@ -472,14 +472,14 @@ const FlowsTab = () => (
                     <div>
                         <strong style={{ color: 'var(--text-primary)' }}>{step.label}</strong>
                         <span style={{ color: 'var(--text-secondary)' }}> — </span>
-                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }} dangerouslySetInnerHTML={{ __html: step.detail }} />
+                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{step.detail}</span>
                     </div>
                 </FlowStep>
             ))}
         </Section>
 
         <Section>
-            <SectionTitle><Clock size={20} /> 2. Cancellation &amp; Retry Flows</SectionTitle>
+            <SectionTitle><Clock size={20} /> 2. Cancellation & Retry Flows</SectionTitle>
             <TwoCol>
                 <MiniCard>
                     <MiniCardTitle><ArrowRight size={15} /> Cancellation</MiniCardTitle>
