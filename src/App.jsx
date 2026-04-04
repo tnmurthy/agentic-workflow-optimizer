@@ -17,6 +17,7 @@ import AboutModal from './components/AboutModal';
 import ProjectInfo from './components/ProjectInfo';
 import TokenFlowSankey from './components/TokenFlowSankey';
 import CostBreakdownSankey from './components/CostBreakdownSankey';
+import RunTrace from './components/RunTrace';
 import { defaultPricing } from './data/workflowData';
 
 const AppContainer = styled.div`
@@ -140,6 +141,11 @@ function App() {
             {/* 11. Action: Export */}
             <Section>
                 <ExportTools pricePerThousand={pricePerThousand} />
+            </Section>
+
+            {/* 12. Observability: Run Traces */}
+            <Section>
+                <RunTrace />
             </Section>
 
             {/* Footer */}

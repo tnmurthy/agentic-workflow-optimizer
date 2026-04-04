@@ -68,11 +68,15 @@ const ScenarioBuilder = () => {
         };
 
         // Save to localStorage
-        const savedScenarios = JSON.parse(localStorage.getItem('agentic-scenarios') || '[]');
-        savedScenarios.push(scenario);
-        localStorage.setItem('agentic-scenarios', JSON.stringify(savedScenarios));
-
-        alert(`Scenario "${scenarioName}" saved successfully!`);
+        try {
+            const savedScenarios = JSON.parse(localStorage.getItem('agentic-scenarios') || '[]');
+            savedScenarios.push(scenario);
+            localStorage.setItem('agentic-scenarios', JSON.stringify(savedScenarios));
+            alert(`Scenario "${scenarioName}" saved successfully!`);
+        } catch (err) {
+            console.error('Failed to save scenario:', err);
+            alert('Could not save scenario (storage unavailable). Please try again.');
+        }
     };
 
     return (

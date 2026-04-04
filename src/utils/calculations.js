@@ -4,18 +4,19 @@ export const calculateCost = (tokens, pricePerThousand) => {
 
 export const calculateSavings = (monolithicCost, agenticCost) => {
     const savings = monolithicCost - agenticCost;
-    const percentage = (savings / monolithicCost) * 100;
+    const percentage = monolithicCost !== 0 ? (savings / monolithicCost) * 100 : 0;
     return { amount: savings, percentage };
 };
 
 export const calculateTokenReduction = (monolithicTokens, agenticTokens) => {
     const reduction = monolithicTokens - agenticTokens;
-    const percentage = (reduction / monolithicTokens) * 100;
+    const percentage = monolithicTokens !== 0 ? (reduction / monolithicTokens) * 100 : 0;
     return { amount: reduction, percentage };
 };
 
 export const calculateMonthlyProjection = (tokensPerMonth, pricePerThousand, monolithicTokens, agenticTokens) => {
-    const requestsPerMonth = tokensPerMonth / agenticTokens;
+    const safeAgenticTokens = agenticTokens > 0 ? agenticTokens : 1;
+    const requestsPerMonth = tokensPerMonth / safeAgenticTokens;
 
     const monolithicCost = calculateCost(requestsPerMonth * monolithicTokens, pricePerThousand);
     const agenticCost = calculateCost(tokensPerMonth, pricePerThousand);

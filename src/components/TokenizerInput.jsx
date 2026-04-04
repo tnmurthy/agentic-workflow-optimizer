@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Sparkles, ArrowRight, Info } from 'lucide-react';
 import { encode } from 'gpt-tokenizer';
 import { agents, monolithicTokens } from '../data/workflowData';
 import { formatNumber } from '../utils/calculations';
 import PromptBreakdown from './PromptBreakdown';
+import { WorkflowRunner, stepSuccess, stepFailure, ErrorKind } from '../utils/workflowEngine';
+import { validateAndRepairTokenAnalysis } from '../utils/schemaValidator';
+import { buildCacheKey, getCached, setCached } from '../utils/cache';
+import { RunTracer } from '../utils/tracer';
 
 const TokenizerCard = styled.div`
     .input-group {
@@ -165,60 +169,104 @@ const TokenizerCard = styled.div`
 const TokenizerInput = ({ analysis: externalAnalysis, onAnalysisChange }) => {
     const [prompt, setPrompt] = useState('');
     const [analysis, setAnalysis] = useState(null);
+    const abortRef = useRef(null);
 
     // Use external analysis if provided, otherwise use local
     const currentAnalysis = externalAnalysis !== undefined ? externalAnalysis : analysis;
 
-    const analyzePrompt = () => {
+    const analyzePrompt = async () => {
         if (!prompt.trim()) return;
 
-        try {
-            // Tokenize the prompt
-            const tokens = encode(prompt);
-            const tokenCount = tokens.length;
+        // Cancel any in-flight run
+        if (abortRef.current) abortRef.current.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
 
-            // Simulate agentic breakdown (proportional to actual agents)
-            const totalAgenticTokens = agents.reduce((sum, a) => sum + a.tokens, 0);
-            const agenticBreakdown = agents.map(agent => ({
-                ...agent,
-                actualTokens: Math.floor((agent.tokens / totalAgenticTokens) * tokenCount)
-            }));
+        const cacheKey = buildCacheKey('tokenize', { prompt }, 'gpt-tokenizer', {});
+        const cached = getCached(cacheKey);
+        if (cached) {
+            setAnalysis(cached);
+            if (onAnalysisChange) onAnalysisChange(cached);
+            return;
+        }
 
-            const agenticTotal = agenticBreakdown.reduce((sum, a) => sum + a.actualTokens, 0);
-            const reduction = ((tokenCount - agenticTotal) / tokenCount) * 100;
+        const tracer = new RunTracer('analyzePrompt');
+        const runner = new WorkflowRunner({
+            signal: controller.signal,
+            retry: { maxAttempts: 2, baseDelayMs: 100 },
+        });
 
-            const newAnalysis = {
-                original: prompt,
-                monolithicTokens: tokenCount,
-                agenticTokens: agenticTotal,
-                agenticBreakdown,
-                reduction: reduction > 0 ? reduction : 0,
-                tokensSaved: tokenCount > agenticTotal ? tokenCount - agenticTotal : 0
-            };
+        const result = await runner.run([
+            {
+                name: 'tokenize',
+                fn: () => {
+                    tracer.stepStart('tokenize', { promptLength: prompt.length });
+                    const tokens = encode(prompt);
+                    tracer.stepEnd('tokenize', { tokenCount: tokens.length });
+                    return tokens;
+                },
+            },
+            {
+                name: 'distribute',
+                fn: (prev) => {
+                    tracer.stepStart('distribute', { tokenCount: prev.output.length });
+                    const tokenCount = prev.output.length;
+                    const totalAgenticTokens = agents.reduce((sum, a) => sum + a.tokens, 0);
+                    const agenticBreakdown = agents.map(agent => ({
+                        ...agent,
+                        actualTokens: Math.floor((agent.tokens / totalAgenticTokens) * tokenCount),
+                    }));
+                    const agenticTotal = agenticBreakdown.reduce((sum, a) => sum + a.actualTokens, 0);
+                    const reduction = tokenCount > 0 ? ((tokenCount - agenticTotal) / tokenCount) * 100 : 0;
+                    const rawAnalysis = {
+                        original: prompt,
+                        monolithicTokens: tokenCount,
+                        agenticTokens: agenticTotal,
+                        agenticBreakdown,
+                        reduction: reduction > 0 ? reduction : 0,
+                        tokensSaved: tokenCount > agenticTotal ? tokenCount - agenticTotal : 0,
+                    };
+                    tracer.stepEnd('distribute', { agenticTotal, reduction });
+                    return rawAnalysis;
+                },
+            },
+            {
+                name: 'validate',
+                fn: (prev) => {
+                    tracer.stepStart('validate', {});
+                    const { value, valid, errors } = validateAndRepairTokenAnalysis(prev.output);
+                    if (!valid) {
+                        tracer.stepError('validate', { kind: ErrorKind.VALIDATION_ERROR, message: errors.join('; ') });
+                        throw Object.assign(new Error(errors.join('; ')), { kind: ErrorKind.VALIDATION_ERROR });
+                    }
+                    tracer.stepEnd('validate', { valid: true });
+                    return value;
+                },
+            },
+        ]);
 
-            // Update both local and external state
-            setAnalysis(newAnalysis);
-            if (onAnalysisChange) {
-                onAnalysisChange(newAnalysis);
-            }
-        } catch (error) {
-            console.error('Tokenization error:', error);
-            // Fallback to character-based estimation
+        tracer.finish({ ok: result.ok, terminationReason: result.terminationReason, guard: result.guard });
+
+        let newAnalysis;
+        if (result.ok) {
+            newAnalysis = result.steps[result.steps.length - 1].output;
+            setCached(cacheKey, newAnalysis);
+        } else {
+            // Fallback: character-based estimation
             const estimatedTokens = Math.ceil(prompt.length / 4);
-            const fallbackAnalysis = {
+            newAnalysis = {
                 original: prompt,
                 monolithicTokens: estimatedTokens,
                 agenticTokens: Math.floor(estimatedTokens * 0.425),
                 agenticBreakdown: agents.map(a => ({ ...a, actualTokens: 0 })),
                 reduction: 57.5,
                 tokensSaved: Math.floor(estimatedTokens * 0.575),
-                isEstimate: true
+                isEstimate: true,
             };
-            setAnalysis(fallbackAnalysis);
-            if (onAnalysisChange) {
-                onAnalysisChange(fallbackAnalysis);
-            }
         }
+
+        setAnalysis(newAnalysis);
+        if (onAnalysisChange) onAnalysisChange(newAnalysis);
     };
 
     const handleKeyPress = (e) => {
