@@ -85,16 +85,16 @@ const Gamification = ({ monthlyTokens, monthlyRequests, pricePerThousand }) => {
                                 className={`card flex items-center gap-md ${isUnlocked ? 'unlocked' : 'locked'}`}
                                 style={{
                                     padding: '1rem',
-                                    background: isUnlocked ? 'var(--bg-tertiary)' : 'rgba(255,255,255,0.02)',
-                                    border: isUnlocked ? '1px solid var(--accent-warning)' : '1px solid rgba(255,255,255,0.05)',
-                                    opacity: isUnlocked ? 1 : 0.6,
+                                    background: isUnlocked ? 'var(--bg-tertiary)' : 'var(--bg-secondary)',
+                                    border: isUnlocked ? '1px solid var(--accent-warning)' : '1px solid var(--glass-border)',
+                                    opacity: isUnlocked ? 1 : 0.65,
                                     transition: 'all 0.3s ease'
                                 }}
                             >
                                 <div style={{
                                     padding: '0.75rem',
                                     borderRadius: '50%',
-                                    background: isUnlocked ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255,255,255,0.05)',
+                                    background: isUnlocked ? 'rgba(245, 158, 11, 0.2)' : 'var(--bg-tertiary)',
                                     color: isUnlocked ? 'var(--accent-warning)' : 'var(--text-muted)'
                                 }}>
                                     {ach.icon}

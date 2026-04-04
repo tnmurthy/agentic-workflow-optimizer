@@ -202,9 +202,9 @@ const BenchmarkMode = () => {
                                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{selected.improvement.tokens}</div>
                                     <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>Token Reduction</div>
                                 </div>
-                                <div className="badge badge-success" style={{ display: 'block', padding: '0.75rem', background: 'var(--gradient-success)' }}>
-                                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{selected.improvement.cost}</div>
-                                    <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>Cost Savings</div>
+                                <div style={{ display: 'block', padding: '0.75rem', background: 'var(--gradient-success)', borderRadius: 'var(--radius-full)', textAlign: 'center', color: 'white' }}>
+                                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{selected.improvement.cost}</div>
+                                    <div style={{ fontSize: '0.8rem', opacity: 0.9, color: 'white' }}>Cost Savings</div>
                                 </div>
                             </div>
                         </div>

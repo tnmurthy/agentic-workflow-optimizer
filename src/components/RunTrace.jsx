@@ -11,7 +11,7 @@ const TraceCard = styled.div`
     }
 
     .trace-item {
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid var(--glass-border);
         border-radius: var(--radius-md);
         overflow: hidden;
     }
@@ -23,10 +23,10 @@ const TraceCard = styled.div`
         padding: var(--spacing-sm) var(--spacing-md);
         cursor: pointer;
         user-select: none;
-        background: rgba(255, 255, 255, 0.04);
+        background: var(--bg-tertiary);
 
         &:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-secondary);
         }
 
         .trace-meta {
@@ -56,13 +56,14 @@ const TraceCard = styled.div`
             font-size: 0.75rem;
             padding: 0.125rem 0.5rem;
             border-radius: 999px;
-            background: rgba(255,255,255,0.1);
+            background: var(--bg-primary);
+            border: 1px solid var(--glass-border);
         }
     }
 
     .trace-body {
         padding: var(--spacing-md);
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid var(--glass-border);
         overflow: auto;
 
         pre {

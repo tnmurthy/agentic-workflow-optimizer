@@ -60,7 +60,7 @@ const WorkflowDiagram = () => {
                     background: 'var(--gradient-success)',
                     borderRadius: 'var(--radius-md)'
                 }}>
-                    <h3 style={{ marginBottom: '0.5rem' }}>Total Pipeline Tokens</h3>
+                    <h3 style={{ marginBottom: '0.5rem', color: 'white' }}>Total Pipeline Tokens</h3>
                     <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: 0 }}>
                         {agenticTotalTokens} tokens
                     </p>
