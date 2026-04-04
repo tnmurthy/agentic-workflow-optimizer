@@ -6,7 +6,7 @@ import { calculateCost, calculateSavings, formatCurrency } from '../utils/calcul
 
 const ProviderComparison = () => {
     const [selectedProvider, setSelectedProvider] = useState('openai');
-    const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
+    const [selectedModel, setSelectedModel] = useState('gpt-4.1-mini');
 
     const currentProvider = llmProviders.find(p => p.id === selectedProvider);
     const currentModel = getModel(selectedProvider, selectedModel);

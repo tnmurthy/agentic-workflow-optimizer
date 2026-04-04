@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BookOpen } from 'lucide-react';
+import { LayoutDashboard, Cpu, FlaskConical, DollarSign, Trophy } from 'lucide-react';
 import Header from './components/Header';
 import ExecDashboard from './components/ExecDashboard';
 import WorkflowDiagram from './components/WorkflowDiagram';
@@ -21,9 +21,7 @@ import CostBreakdownSankey from './components/CostBreakdownSankey';
 import RunTrace from './components/RunTrace';
 import { defaultPricing } from './data/workflowData';
 
-const AppContainer = styled.div`
-    // No specific styles needed here as .container handles it
-`;
+const AppContainer = styled.div``;
 
 const Section = styled.div`
     margin-top: var(--spacing-xl);
@@ -52,13 +50,60 @@ const FooterText = styled.p`
     opacity: 0.7;
 `;
 
+const TabBar = styled.nav`
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-lg);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+`;
+
+const TabButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    background: ${({ $active }) => $active ? 'var(--gradient-accent)' : 'transparent'};
+    color: ${({ $active }) => $active ? '#fff' : 'var(--text-secondary)'};
+    box-shadow: ${({ $active }) => $active ? 'var(--shadow-md)' : 'none'};
+
+    &:hover {
+        background: ${({ $active }) => $active ? 'var(--gradient-accent)' : 'var(--bg-tertiary)'};
+        color: ${({ $active }) => $active ? '#fff' : 'var(--text-primary)'};
+    }
+`;
+
+const TabContent = styled.div`
+    display: ${({ $active }) => $active ? 'block' : 'none'};
+`;
+
+const TABS = [
+    { id: 'overview',   label: 'Overview',          Icon: LayoutDashboard },
+    { id: 'tokens',     label: 'Token Analysis',     Icon: Cpu },
+    { id: 'benchmarks', label: 'Benchmarks',         Icon: FlaskConical },
+    { id: 'costs',      label: 'Cost & Economics',   Icon: DollarSign },
+    { id: 'results',    label: 'Results & Export',   Icon: Trophy },
+];
 
 function App() {
     const [pricePerThousand, setPricePerThousand] = useState(defaultPricing.pricePerThousandTokens);
     const [monthlyRequests, setMonthlyRequests] = useState(100000);
     const [monthlyTokens, setMonthlyTokens] = useState(10000000);
     const [isAboutOpen, setIsAboutOpen] = useState(false);
-    const [tokenAnalysis, setTokenAnalysis] = useState(null); // Lifted state for token analysis
+    const [tokenAnalysis, setTokenAnalysis] = useState(null);
+    const [activeTab, setActiveTab] = useState('overview');
 
     return (
         <AppContainer className="container">
@@ -67,90 +112,96 @@ function App() {
             {/* Header */}
             <Header onAboutClick={() => setIsAboutOpen(true)} />
 
-            {/* Executive Dashboard */}
-            <ExecDashboard />
+            {/* Tab Navigation */}
+            <TabBar role="tablist" aria-label="Page sections">
+                {TABS.map(({ id, label, Icon }) => (
+                    <TabButton
+                        key={id}
+                        role="tab"
+                        aria-selected={activeTab === id}
+                        $active={activeTab === id}
+                        onClick={() => setActiveTab(id)}
+                    >
+                        <Icon size={16} />
+                        {label}
+                    </TabButton>
+                ))}
+            </TabBar>
 
-            {/* 1. Context: Project Info */}
-            <ProjectInfo />
+            {/* Tab: Overview */}
+            <TabContent $active={activeTab === 'overview'} role="tabpanel">
+                <ExecDashboard />
+                <ProjectInfo />
+            </TabContent>
 
-            {/* 2. Interactive Learning: What is a Token? */}
-            <Section>
-                <TokenizerInput
-                    analysis={tokenAnalysis}
-                    onAnalysisChange={setTokenAnalysis}
-                />
-            </Section>
+            {/* Tab: Token Analysis */}
+            <TabContent $active={activeTab === 'tokens'} role="tabpanel">
+                <Section>
+                    <TokenizerInput
+                        analysis={tokenAnalysis}
+                        onAnalysisChange={setTokenAnalysis}
+                    />
+                </Section>
+                <Section>
+                    <TokenFlowSankey tokenAnalysis={tokenAnalysis} />
+                </Section>
+                <WorkflowDiagram />
+                <Section>
+                    <TokenComparison />
+                </Section>
+            </TabContent>
 
-            {/* 2.5. Token Flow Visualization */}
-            <Section>
-                <TokenFlowSankey tokenAnalysis={tokenAnalysis} />
-            </Section>
+            {/* Tab: Benchmarks */}
+            <TabContent $active={activeTab === 'benchmarks'} role="tabpanel">
+                <Section>
+                    <BenchmarkMode />
+                </Section>
+                <Section>
+                    <ScenarioBuilder />
+                </Section>
+            </TabContent>
 
-            {/* 3. The Concept: Visualizing the Workflow */}
-            <WorkflowDiagram />
+            {/* Tab: Cost & Economics */}
+            <TabContent $active={activeTab === 'costs'} role="tabpanel">
+                <Section>
+                    <ProviderComparison />
+                </Section>
+                <GridSection className="grid grid-2 gap-lg">
+                    <CostCalculator
+                        pricePerThousand={pricePerThousand}
+                        onPriceChange={setPricePerThousand}
+                    />
+                    <ScenarioInput
+                        monthlyRequests={monthlyRequests}
+                        onMonthlyRequestsChange={setMonthlyRequests}
+                        monthlyTokens={monthlyTokens}
+                        onMonthlyTokensChange={setMonthlyTokens}
+                    />
+                </GridSection>
+                <Section>
+                    <ProjectionCharts pricePerThousand={pricePerThousand} />
+                </Section>
+                <Section>
+                    <CostBreakdownSankey />
+                </Section>
+            </TabContent>
 
-            {/* 4. The Proof: Token Comparison */}
-            <Section>
-                <TokenComparison />
-            </Section>
-
-            {/* 5. Real Examples: Benchmark Mode */}
-            <Section>
-                <BenchmarkMode />
-            </Section>
-
-            {/* 6. Deep Dive: Scenario Builder */}
-            <Section>
-                <ScenarioBuilder />
-            </Section>
-
-            {/* 7. Economics: Provider Comparison */}
-            <Section>
-                <ProviderComparison />
-            </Section>
-
-            {/* 8. Business Case: Cost Calculator */}
-            <GridSection className="grid grid-2 gap-lg">
-                <CostCalculator
-                    pricePerThousand={pricePerThousand}
-                    onPriceChange={setPricePerThousand}
-                />
-                <ScenarioInput
-                    monthlyRequests={monthlyRequests}
-                    onMonthlyRequestsChange={setMonthlyRequests}
-                    monthlyTokens={monthlyTokens}
-                    onMonthlyTokensChange={setMonthlyTokens}
-                />
-            </GridSection>
-
-            {/* 9. Long-term Value: Projections */}
-            <Section>
-                <ProjectionCharts pricePerThousand={pricePerThousand} />
-            </Section>
-
-            {/* 9.5. Cost Flow Analysis */}
-            <Section>
-                <CostBreakdownSankey />
-            </Section>
-
-            {/* 10. Engagement: Gamification */}
-            <Section>
-                <Gamification
-                    monthlyTokens={monthlyTokens}
-                    monthlyRequests={monthlyRequests}
-                    pricePerThousand={pricePerThousand}
-                />
-            </Section>
-
-            {/* 11. Action: Export */}
-            <Section>
-                <ExportTools pricePerThousand={pricePerThousand} />
-            </Section>
-
-            {/* 12. Observability: Run Traces */}
-            <Section>
-                <RunTrace />
-            </Section>
+            {/* Tab: Results & Export */}
+            <TabContent $active={activeTab === 'results'} role="tabpanel">
+                <Section>
+                    <Gamification
+                        monthlyTokens={monthlyTokens}
+                        monthlyRequests={monthlyRequests}
+                        pricePerThousand={pricePerThousand}
+                    />
+                </Section>
+                <Section>
+                    <ExportTools pricePerThousand={pricePerThousand} />
+                </Section>
+                <Section>
+                    <RunTrace />
+                </Section>
+            </TabContent>
 
             {/* Footer */}
             <Footer>
