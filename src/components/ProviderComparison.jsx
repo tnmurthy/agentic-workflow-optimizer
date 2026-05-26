@@ -5,11 +5,14 @@ import { monolithicTokens, agenticTotalTokens } from '../data/workflowData';
 import { calculateCost, calculateSavings, formatCurrency } from '../utils/calculations';
 
 const ProviderComparison = () => {
-    const [selectedProvider, setSelectedProvider] = useState('openai');
-    const [selectedModel, setSelectedModel] = useState('gpt-4.1-mini');
+    const defaultProvider = llmProviders[0] || { id: 'openai', models: [{ id: 'gpt-4o-mini' }] };
+    const defaultModel = defaultProvider.models[0] || { id: 'gpt-4o-mini' };
 
-    const currentProvider = llmProviders.find(p => p.id === selectedProvider);
-    const currentModel = getModel(selectedProvider, selectedModel);
+    const [selectedProvider, setSelectedProvider] = useState(defaultProvider.id);
+    const [selectedModel, setSelectedModel] = useState(defaultModel.id);
+
+    const currentProvider = llmProviders.find(p => p.id === selectedProvider) || defaultProvider;
+    const currentModel = getModel(selectedProvider, selectedModel) || currentProvider.models[0] || defaultModel;
 
     // Calculate costs (assuming 50/50 input/output split)
     const monolithicInputTokens = monolithicTokens * 0.5;

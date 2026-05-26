@@ -1,5 +1,5 @@
 // LLM Provider and Model definitions with real-world pricing
-// Last updated: April 2026 — reflects latest model releases from each provider
+// Last updated: May 2026 — reflects latest model releases from each provider
 
 export const llmProviders = [
     {
@@ -8,28 +8,28 @@ export const llmProviders = [
         logo: '🤖',
         models: [
             {
-                id: 'gpt-4.1',
-                name: 'GPT-4.1',
-                inputCostPer1M: 2.00,
-                outputCostPer1M: 8.00,
-                contextWindow: 1000000,
-                description: 'Latest flagship model — 1M context, strong coding & instruction following'
+                id: 'o1',
+                name: 'o1',
+                inputCostPer1M: 15.00,
+                outputCostPer1M: 60.00,
+                contextWindow: 200000,
+                description: 'Advanced reasoning model, top tier for logic and math'
             },
             {
-                id: 'gpt-4.1-mini',
-                name: 'GPT-4.1 Mini',
-                inputCostPer1M: 0.40,
-                outputCostPer1M: 1.60,
-                contextWindow: 1000000,
-                description: 'Efficient mid-tier model, significantly cheaper than GPT-4.1'
+                id: 'o1-mini',
+                name: 'o1-mini',
+                inputCostPer1M: 3.00,
+                outputCostPer1M: 12.00,
+                contextWindow: 128000,
+                description: 'Fast reasoning model, ideal for structured coding'
             },
             {
-                id: 'gpt-4.1-nano',
-                name: 'GPT-4.1 Nano',
-                inputCostPer1M: 0.10,
-                outputCostPer1M: 0.40,
-                contextWindow: 1000000,
-                description: 'Ultra-low cost model, ideal for high-volume simple tasks'
+                id: 'o3-mini',
+                name: 'o3-mini',
+                inputCostPer1M: 1.10,
+                outputCostPer1M: 4.40,
+                contextWindow: 200000,
+                description: 'Next-gen cost-efficient reasoning model with superb STEM capability'
             },
             {
                 id: 'gpt-4o',
@@ -37,7 +37,7 @@ export const llmProviders = [
                 inputCostPer1M: 2.50,
                 outputCostPer1M: 10.00,
                 contextWindow: 128000,
-                description: 'Multimodal flagship — text, vision & audio in one model'
+                description: 'Flagship multimodal model (text, vision & audio)'
             },
             {
                 id: 'gpt-4o-mini',
@@ -45,23 +45,7 @@ export const llmProviders = [
                 inputCostPer1M: 0.15,
                 outputCostPer1M: 0.60,
                 contextWindow: 128000,
-                description: 'Fast and affordable, great for everyday tasks'
-            },
-            {
-                id: 'o3',
-                name: 'o3',
-                inputCostPer1M: 10.00,
-                outputCostPer1M: 40.00,
-                contextWindow: 200000,
-                description: 'Advanced reasoning model, best for math, science & code'
-            },
-            {
-                id: 'o4-mini',
-                name: 'o4-mini',
-                inputCostPer1M: 1.10,
-                outputCostPer1M: 4.40,
-                contextWindow: 200000,
-                description: 'Cost-efficient reasoning model with strong STEM performance'
+                description: 'Ultra-fast, highly cost-effective model for high volume tasks'
             }
         ]
     },
@@ -84,7 +68,7 @@ export const llmProviders = [
                 inputCostPer1M: 3.00,
                 outputCostPer1M: 15.00,
                 contextWindow: 200000,
-                description: 'Excellent for complex reasoning and long-form content'
+                description: 'High intelligence flagship model for complex coding & reasoning'
             },
             {
                 id: 'claude-3-5-haiku',
@@ -92,7 +76,7 @@ export const llmProviders = [
                 inputCostPer1M: 0.80,
                 outputCostPer1M: 4.00,
                 contextWindow: 200000,
-                description: 'Fast and affordable, strong for everyday tasks'
+                description: 'Blazing fast intelligence, excellent cost-to-performance ratio'
             },
             {
                 id: 'claude-3-haiku',
@@ -100,7 +84,7 @@ export const llmProviders = [
                 inputCostPer1M: 0.25,
                 outputCostPer1M: 1.25,
                 contextWindow: 200000,
-                description: 'Most compact and fastest, cost-effective for simple tasks'
+                description: 'Original high-speed compact model, ideal for simple routing tasks'
             }
         ]
     },
@@ -113,9 +97,17 @@ export const llmProviders = [
                 id: 'gemini-2-5-pro',
                 name: 'Gemini 2.5 Pro',
                 inputCostPer1M: 1.25,
-                outputCostPer1M: 10.00,
+                outputCostPer1M: 5.00,
+                contextWindow: 2000000,
+                description: 'State-of-the-art reasoning model with massive 2M context window'
+            },
+            {
+                id: 'gemini-2-5-flash',
+                name: 'Gemini 2.5 Flash',
+                inputCostPer1M: 0.075,
+                outputCostPer1M: 0.30,
                 contextWindow: 1000000,
-                description: 'State-of-the-art thinking model, best for complex reasoning'
+                description: 'Ultra-efficient high throughput model with 1M context'
             },
             {
                 id: 'gemini-2-0-flash',
@@ -123,7 +115,7 @@ export const llmProviders = [
                 inputCostPer1M: 0.10,
                 outputCostPer1M: 0.40,
                 contextWindow: 1000000,
-                description: 'Next-gen speed and efficiency, excellent cost-to-performance'
+                description: 'High performance and low latency flash model'
             },
             {
                 id: 'gemini-1-5-pro',
@@ -131,7 +123,7 @@ export const llmProviders = [
                 inputCostPer1M: 1.25,
                 outputCostPer1M: 5.00,
                 contextWindow: 2000000,
-                description: 'Massive 2M context window, strong multimodal capabilities'
+                description: 'Deep multimodal capabilities, excellent for large compliance runs'
             },
             {
                 id: 'gemini-1-5-flash',
@@ -139,7 +131,7 @@ export const llmProviders = [
                 inputCostPer1M: 0.075,
                 outputCostPer1M: 0.30,
                 contextWindow: 1000000,
-                description: 'Fast and efficient, optimized for high-throughput workloads'
+                description: 'Fast and cost-effective, optimized for high-throughput workflows'
             }
         ]
     },
@@ -149,28 +141,28 @@ export const llmProviders = [
         logo: '🌊',
         models: [
             {
-                id: 'mistral-large-2',
-                name: 'Mistral Large 2',
+                id: 'mistral-large-latest',
+                name: 'Mistral Large',
                 inputCostPer1M: 2.00,
                 outputCostPer1M: 6.00,
                 contextWindow: 128000,
-                description: 'Top-tier multilingual model, strong at coding and reasoning'
+                description: 'Top-tier multilingual model, strong at reasoning and coding'
             },
             {
-                id: 'codestral',
+                id: 'codestral-latest',
                 name: 'Codestral',
                 inputCostPer1M: 0.30,
                 outputCostPer1M: 0.90,
                 contextWindow: 256000,
-                description: 'Specialized code model — 80+ languages, 256K context'
+                description: 'Specialized coding assistant with large context'
             },
             {
-                id: 'mistral-small-3',
-                name: 'Mistral Small 3',
+                id: 'mistral-small-latest',
+                name: 'Mistral Small',
                 inputCostPer1M: 0.10,
                 outputCostPer1M: 0.30,
                 contextWindow: 32000,
-                description: 'Ultra-efficient, Apache 2.0 licensed, great for local deployments'
+                description: 'Fast and compact model for high-throughput execution'
             }
         ]
     }

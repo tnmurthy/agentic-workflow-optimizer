@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Award, Star, TrendingUp, DollarSign } from 'lucide-react';
+import { Trophy, Award, Star, TrendingUp, DollarSign, Check } from 'lucide-react';
 import { formatNumber, formatCurrency } from '../utils/calculations';
 
 const achievementsList = [
     {
         id: 'token_novice',
-        title: 'Token Novice',
-        description: 'Saved your first 1,000 tokens',
+        title: 'Early Payload Optimization',
+        description: 'Demonstrated context optimization of >1,000 tokens',
         icon: <Star size={20} />,
         threshold: 1000,
         type: 'tokens'
     },
     {
         id: 'cost_cutter',
-        title: 'Cost Cutter',
-        description: 'Projected savings of > $100/month',
+        title: 'Economic Efficiency Target',
+        description: 'Projected monthly savings exceeding $100',
         icon: <DollarSign size={20} />,
         threshold: 100,
         type: 'savings'
     },
     {
         id: 'architect',
-        title: 'Workflow Architect',
-        description: 'Created a custom scenario',
+        title: 'Architectural Scenario Validation',
+        description: 'Constructed and simulated a custom routing scenario',
         icon: <TrendingUp size={20} />,
         threshold: 1,
         type: 'scenarios'
     },
     {
         id: 'optimizer_elite',
-        title: 'Optimizer Elite',
-        description: 'Saved over 1 Million tokens',
+        title: 'Enterprise-Scale Efficiency',
+        description: 'Achieved context compression exceeding 1 Million tokens',
         icon: <Trophy size={20} />,
         threshold: 1000000,
         type: 'tokens'
@@ -69,8 +69,8 @@ const Gamification = ({ monthlyTokens, monthlyRequests, pricePerThousand }) => {
                 <div className="flex items-center gap-sm">
                     <Award size={24} style={{ color: 'var(--accent-warning)' }} />
                     <div>
-                        <h2>Achievements</h2>
-                        <p>Your optimization milestones</p>
+                        <h2>Business Case Target Validation</h2>
+                        <p>Tracking alignment with enterprise efficiency and ROI objectives</p>
                     </div>
                 </div>
             </div>
@@ -147,22 +147,5 @@ const Gamification = ({ monthlyTokens, monthlyRequests, pricePerThousand }) => {
         </div>
     );
 };
-
-// Helper component
-const Check = ({ size, style }) => (
-    <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={style}
-    >
-        <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-);
 
 export default Gamification;

@@ -1,36 +1,36 @@
 :root {
-  /* Enterprise Light Glass Theme */
-  --bg-primary: #F8FAFC; /* Slate 50 */
-  --bg-secondary: #FFFFFF; /* White */
-  --bg-tertiary: #F1F5F9; /* Slate 100 */
-  --bg-card: rgba(255, 255, 255, 0.7); /* White Glass */
-  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  /* Enterprise Obsidian Purple Glass Theme */
+  --bg-primary: #070614; /* Deep Obsidian Purple Space */
+  --bg-secondary: #0D0B1F; /* Deep Navy-Violet */
+  --bg-tertiary: #161330; /* Dark Indigo-Slate */
+  --bg-card: rgba(18, 16, 38, 0.7); /* Obsidian Glass Violet */
+  --bg-card-hover: rgba(27, 24, 56, 0.8);
   
-  --glass-border: rgba(226, 232, 240, 0.6); /* Slate 200 with opacity */
+  --glass-border: rgba(129, 140, 248, 0.12); /* Subtle indigo glass edge */
   
-  /* Accents - Professional & Trustworthy */
-  --accent-primary: #0284C7; /* Sky 600 */
-  --accent-secondary: #6366F1; /* Indigo 500 */
-  --accent-success: #10B981; /* Emerald 500 */
-  --accent-warning: #F59E0B; /* Amber 500 */
-  --accent-danger: #EF4444; /* Red 500 */
+  /* Accents - Premium High-Contrast Palette */
+  --accent-primary: #818CF8; /* Lavender Indigo */
+  --accent-secondary: #A78BFA; /* Pure Violet */
+  --accent-success: #10B981; /* Emerald/Mint */
+  --accent-warning: #F59E0B; /* Amber Gold */
+  --accent-danger: #EF4444; /* Coral/Rose Red */
   
   /* Text */
-  --text-primary: #0F172A; /* Slate 900 */
-  --text-secondary: #475569; /* Slate 600 */
-  --text-muted: #94A3B8; /* Slate 400 */
+  --text-primary: #F3F4F6; /* Cool light gray */
+  --text-secondary: #A7B3C6; /* Light gray-lavender */
+  --text-muted: #6B7280; /* Darker gray */
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #0369A1 0%, #4338CA 100%);
-  --gradient-accent: linear-gradient(135deg, #0284C7 0%, #6366F1 100%);
-  --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --gradient-primary: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+  --gradient-accent: linear-gradient(135deg, #818CF8 0%, #C084FC 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #047857 100%);
   
-  /* Shadows - Essential for Light Depth */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 0 15px rgba(2, 132, 199, 0.2);
-  --glass-shadow: 0 8px 32px rgba(2, 132, 199, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Shadows - Dark Mode Depth */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 15px rgba(129, 140, 248, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
   
   /* Spacing & Radius */
   --spacing-xs: 0.5rem;
@@ -60,8 +60,9 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.05) 0px, transparent 50%);
 }
 
 /* Typography */
@@ -391,3 +392,93 @@ p {
     padding: var(--spacing-sm);
   }
 }
+
+/* Executive Cockpit Viewport Optimizations */
+.executive-cockpit .executive-layout {
+  gap: var(--spacing-sm) !important;
+  margin-top: var(--spacing-sm) !important;
+}
+
+.executive-cockpit .card {
+  padding: 0.6rem var(--spacing-sm) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.executive-cockpit .card-header {
+  margin-bottom: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+.executive-cockpit .input-group {
+  margin-bottom: 0.35rem !important;
+}
+
+.executive-cockpit p {
+  margin-bottom: 0.2rem !important;
+  line-height: 1.4 !important;
+}
+
+.executive-cockpit .slider-wrapper {
+  margin-bottom: 0.15rem !important;
+}
+
+/* Zero-Dependency CSS Tooltips */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  background: rgba(11, 9, 28, 0.96);
+  border: 1px solid var(--accent-primary);
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  z-index: 9999;
+  pointer-events: none;
+  white-space: normal;
+}
+
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--accent-primary) transparent transparent transparent;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+[data-tooltip]:hover::after {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+[data-tooltip]:hover::before {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+

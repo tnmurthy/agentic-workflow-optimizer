@@ -64,14 +64,14 @@ const Header = ({ onAboutClick }) => {
             <div className="flex items-center gap-md mb-md">
                 <WorkflowIcon size={48} />
                 <div>
-                    <Title>Agentic Workflow Token Optimizer</Title>
+                    <Title>Agentic ROI Engine</Title>
                     <Subtitle>
-                        Reduce AI Costs by up to 60% with Modular Agent Pipelines
+                        Enterprise AI Financial Modeler & Labor Reclamation Planner
                     </Subtitle>
                 </div>
             </div>
             <Description>
-                Discover how breaking down monolithic prompts into specialized agents can dramatically reduce token usage and operational costs for your AI applications.
+                Model the direct API token savings and indirect operational labor capacity reclaimed by transitioning from monolithic prompt applications to sequenced, self-healing agent pipelines.
             </Description>
         </HeaderCard>
     );

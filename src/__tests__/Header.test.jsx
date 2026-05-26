@@ -5,6 +5,6 @@ import Header from '../components/Header';
 
 test('renders header title', () => {
     render(<Header />);
-    const headerElement = screen.getByText(/Agentic Workflow Token Optimizer/i);
+    const headerElement = screen.getByText(/Agentic ROI Engine/i);
     expect(headerElement).toBeInTheDocument();
 });

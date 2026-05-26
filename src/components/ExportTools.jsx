@@ -3,10 +3,54 @@ import { Download, FileText, Table } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { monolithicTokens, agenticTotalTokens } from '../data/workflowData';
-import { calculateCost, calculateSavings, formatCurrency, formatNumber } from '../utils/calculations';
+import { calculateLaborSavings, calculateNPV, calculatePaybackPeriod, calculateCostWithEngine, calculateOpEx, formatCurrency, formatNumber } from '../utils/calculations';
 
-const ExportTools = ({ pricePerThousand }) => {
+const ExportTools = ({
+    pricePerThousand,
+    monthlyRequests,
+    monthlyTokens,
+    laborRate,
+    auditTime,
+    monoError,
+    agenticError,
+    implCost,
+    cacheHitRate = 30,
+    frontierMix = 40,
+    contractDiscount = 15,
+    maintenancePercent = 15,
+    compact = false
+}) => {
     const [isExporting, setIsExporting] = React.useState(false);
+
+    // 1. Core Calculations
+    const monolithicTokenCost = calculateCostWithEngine(monolithicTokens, pricePerThousand, 0, contractDiscount);
+    const monolithicLaborCost = (monoError / 100) * (auditTime / 60) * laborRate;
+    const monolithicCostPerRequest = monolithicTokenCost + monolithicLaborCost;
+
+    const utilityPricePerThousand = pricePerThousand / 8;
+    const blendedPricePerThousand = (frontierMix / 100) * pricePerThousand + (1 - frontierMix / 100) * utilityPricePerThousand;
+    const agenticTokenCost = calculateCostWithEngine(agenticTotalTokens, blendedPricePerThousand, cacheHitRate, contractDiscount);
+    const agenticLaborCost = (agenticError / 100) * (auditTime / 60) * laborRate;
+    const agenticCostPerRequest = agenticTokenCost + agenticLaborCost;
+
+    const monthlyTokenSavings = (monolithicTokenCost - agenticTokenCost) * monthlyRequests;
+
+    const laborSavingsObj = calculateLaborSavings(
+        monthlyRequests,
+        monoError,
+        agenticError,
+        auditTime,
+        laborRate
+    );
+
+    const monthlyMaintenanceOpEx = calculateOpEx(implCost, maintenancePercent);
+
+    const totalMonthlyGrossSavings = monthlyTokenSavings + laborSavingsObj.monthlySavings;
+    const totalMonthlyNetSavings = totalMonthlyGrossSavings - monthlyMaintenanceOpEx;
+    const totalAnnualNetSavings = totalMonthlyNetSavings * 12;
+
+    const npv = calculateNPV(implCost, totalMonthlyGrossSavings, monthlyMaintenanceOpEx);
+    const paybackPeriod = calculatePaybackPeriod(implCost, totalMonthlyGrossSavings, monthlyMaintenanceOpEx);
 
     const exportToPDF = async () => {
         setIsExporting(true);
@@ -21,95 +65,115 @@ const ExportTools = ({ pricePerThousand }) => {
             exportContainer.style.left = '-9999px';
             document.body.appendChild(exportContainer);
 
-            // Build the content
-            const monolithicCost = calculateCost(monolithicTokens, pricePerThousand);
-            const agenticCost = calculateCost(agenticTotalTokens, pricePerThousand);
-            const savings = calculateSavings(monolithicCost, agenticCost);
-
             exportContainer.innerHTML = `
-        <div style="font-family: Arial, sans-serif;">
-          <h1 style="color: #6366f1; margin-bottom: 10px;">Agentic Workflow Analysis Report</h1>
-          <p style="color: #666; margin-bottom: 30px;">Generated on ${new Date().toLocaleDateString()}</p>
+        <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 20px;">
+          <div style="border-bottom: 2px solid #0284c7; padding-bottom: 15px; margin-bottom: 30px;">
+            <h1 style="color: #0369a1; margin: 0; font-size: 26px;">Agentic AI Business Case Report</h1>
+            <p style="color: #64748b; margin: 5px 0 0 0; font-size: 14px;">Operational Leverage & Financial ROI Analysis &bull; Prepared on ${new Date().toLocaleDateString()}</p>
+          </div>
           
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Executive Summary</h2>
-          <p style="line-height: 1.6;">
-            This report demonstrates the cost savings achieved through agentic workflow architecture
-            compared to traditional monolithic prompt approaches. By breaking down complex tasks into
-            specialized agents, we achieve significant token reduction and cost optimization.
+          <h2 style="color: #0f172a; margin-top: 30px; margin-bottom: 12px; font-size: 18px;">Executive Summary</h2>
+          <p style="line-height: 1.6; font-size: 14px; margin-bottom: 25px;">
+            This assessment evaluates the economic feasibility of migrating from monolithic single-prompt workflows to an
+            orchestrated agentic pipeline. The analysis models both <strong>direct token cost reductions</strong> and
+            <strong>indirect labor capacity reclaimed</strong> due to self-healing validation guards, offset by implementation setup and ongoing system maintenance.
           </p>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Token Usage Comparison</h2>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+
+          <h2 style="color: #0f172a; margin-top: 25px; margin-bottom: 12px; font-size: 18px;">Strategic ROI Scorecard</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;">
             <thead>
-              <tr style="background: #f3f4f6;">
-                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Approach</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Tokens</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Cost per Request</th>
+              <tr style="background: #f1f5f9;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-weight: 600;">Financial Indicator</th>
+                <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-weight: 600;">Value</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-weight: 600;">Strategic Context</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">Monolithic Prompt</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(monolithicTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(monolithicCost)}</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold;">Annualized Net Savings</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: bold; color: #16a34a;">${formatCurrency(totalAnnualNetSavings)}</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; color: #64748b;">Direct LLM Savings + Indirect labor reduction (Net of OpEx)</td>
               </tr>
               <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">Agentic Pipeline</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(agenticTotalTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(agenticCost)}</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold;">5-Year Net Present Value (NPV)</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: bold; color: #0284c7;">${formatCurrency(npv)}</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; color: #64748b;">Discounted at 10% annual rate (with CapEx & OpEx)</td>
               </tr>
-              <tr style="background: #10b98133; font-weight: bold;">
-                <td style="padding: 12px; border: 1px solid #ddd;">Savings</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatNumber(monolithicTokens - agenticTotalTokens)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${formatCurrency(savings.amount)} (${savings.percentage.toFixed(1)}%)</td>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold;">Payback Period (Months)</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: bold;">${paybackPeriod === 999 ? 'N/A' : paybackPeriod + ' Months'}</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; color: #64748b;">Amortization of ${formatCurrency(implCost)} setup cost (CapEx)</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold;">Annual Auditor Hours Saved</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: bold;">${formatNumber(Math.round(laborSavingsObj.hoursSaved * 12))} Hrs</td>
+                <td style="padding: 10px; border: 1px solid #e2e8f0; color: #64748b;">Auditing capacity redirected to core operations</td>
               </tr>
             </tbody>
           </table>
           
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Cost Projections</h2>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <h2 style="color: #0f172a; margin-top: 30px; margin-bottom: 12px; font-size: 18px;">Monthly Cost Breakdown</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;">
             <thead>
-              <tr style="background: #f3f4f6;">
-                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Scale</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Monolithic</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Agentic</th>
-                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Monthly Savings</th>
+              <tr style="background: #f1f5f9;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-weight: 600;">Cost Element (Monthly)</th>
+                <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-weight: 600;">Monolithic Prompt</th>
+                <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-weight: 600;">Agentic Workflow</th>
+                <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-weight: 600;">Monthly Variance</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">1M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 1000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$2.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 1000000 / agenticTotalTokens) - 2).toFixed(2)}</td>
+                <td style="padding: 10px; border: 1px solid #cbd5e1;">LLM Token Costs</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">${formatCurrency(monolithicTokenCost * monthlyRequests)}</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">${formatCurrency(agenticTokenCost * monthlyRequests)}</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; color: #16a34a;">${formatCurrency(monthlyTokenSavings)}</td>
               </tr>
               <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">10M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 10000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$20.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 10000000 / agenticTotalTokens) - 20).toFixed(2)}</td>
+                <td style="padding: 10px; border: 1px solid #cbd5e1;">Manual Auditor Labor Costs</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">${formatCurrency(monolithicLaborCost * monthlyRequests)}</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">${formatCurrency(agenticLaborCost * monthlyRequests)}</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; color: #16a34a;">${formatCurrency(laborSavingsObj.monthlySavings)}</td>
               </tr>
               <tr>
-                <td style="padding: 12px; border: 1px solid #ddd;">100M tokens/month</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(monolithicCost * 100000000 / agenticTotalTokens).toFixed(2)}</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$200.00</td>
-                <td style="padding: 12px; text-align: right; border: 1px solid #ddd; color: #10b981;">$${((monolithicCost * 100000000 / agenticTotalTokens) - 200).toFixed(2)}</td>
+                <td style="padding: 10px; border: 1px solid #cbd5e1;">System Maintenance (OpEx)</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">$0.00</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">${formatCurrency(monthlyMaintenanceOpEx)}</td>
+                <td style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; color: #dc2626;">-${formatCurrency(monthlyMaintenanceOpEx)}</td>
+              </tr>
+              <tr style="background: #f0fdf4; font-weight: bold; font-size: 15px;">
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Total Net Operating TCO</td>
+                <td style="padding: 12px; text-align: right; border: 1px solid #cbd5e1; color: #1e293b;">${formatCurrency(monolithicCostPerRequest * monthlyRequests)}</td>
+                <td style="padding: 12px; text-align: right; border: 1px solid #cbd5e1; color: #1e293b;">${formatCurrency(agenticCostPerRequest * monthlyRequests + monthlyMaintenanceOpEx)}</td>
+                <td style="padding: 12px; text-align: right; border: 1px solid #cbd5e1; color: #16a34a;">${formatCurrency(totalMonthlyNetSavings)}</td>
               </tr>
             </tbody>
           </table>
-          
-          <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Recommendations</h2>
-          <ul style="line-height: 1.8;">
-            <li>Implement agentic architecture for complex, multi-step workflows</li>
-            <li>Start with high-volume use cases to maximize ROI</li>
-            <li>Monitor per-agent performance and optimize token allocation</li>
-            <li>Consider different LLM providers based on specific agent requirements</li>
+
+          <h2 style="color: #0f172a; margin-top: 30px; margin-bottom: 12px; font-size: 18px;">Key Assumptions</h2>
+          <ul style="line-height: 1.8; font-size: 14px; padding-left: 20px; color: #475569;">
+            <li>Monthly Transaction Volume: <strong>${formatNumber(monthlyRequests)} requests</strong></li>
+            <li>Auditor Labor Hourly Rate: <strong>$${laborRate}/hour</strong></li>
+            <li>Review Time spent per error: <strong>${auditTime} minutes</strong></li>
+            <li>Monolithic failure rate: <strong>${monoError}%</strong> vs. Agentic failure rate: <strong>${agenticError}%</strong></li>
+            <li>Blended Token Pricing: <strong>$${pricePerThousand} per 1,000 tokens</strong></li>
+            <li>Negotiated Contract Discount: <strong>${contractDiscount}%</strong></li>
+            <li>Cache Hit Rate (Agentic Caching): <strong>${cacheHitRate}%</strong></li>
+            <li>Frontier / Utility Model Mix: <strong>${frontierMix}% / ${100 - frontierMix}%</strong></li>
+            <li>One-off setup and migration cost (CapEx): <strong>${formatCurrency(implCost)}</strong></li>
+            <li>Annual maintenance fee (OpEx): <strong>${maintenancePercent}% of CapEx</strong> (${formatCurrency(monthlyMaintenanceOpEx)}/month)</li>
           </ul>
+
+          <h2 style="color: #0f172a; margin-top: 30px; margin-bottom: 12px; font-size: 18px;">Strategic Advisory Recommendations</h2>
+          <ol style="line-height: 1.8; font-size: 14px; padding-left: 20px; color: #475569;">
+            <li><strong>Initiate Pilot Triage</strong>: Select high-volume workflows like support routing to prove model savings before full compliance rollout.</li>
+            <li><strong>Enforce Schema Guards</strong>: Embed real-time validator layers to drive down error correction loops, maximizing labor savings.</li>
+            <li><strong>Consolidate APIs</strong>: Route low-complexity agent steps to cost-effective models (e.g. Gemini Flash/GPT-4o mini) dynamically.</li>
+          </ol>
           
-          <div style="margin-top: 40px; padding: 20px; background: #f9fafb; border-left: 4px solid #6366f1;">
-            <p style="margin: 0; font-size: 14px; color: #666;">
-              Generated by Agentic Workflow Token Optimizer<br>
-              For more information, visit the application dashboard
+          <div style="margin-top: 40px; padding: 15px; background: #f8fafc; border-left: 4px solid #0284c7; font-size: 12px; color: #64748b;">
+            <p style="margin: 0;">
+              Generated by Agentic Workflow ROI Calculator &bull; Confidential Consulting Asset
             </p>
           </div>
         </div>
@@ -132,7 +196,7 @@ const ExportTools = ({ pricePerThousand }) => {
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
             pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-            pdf.save('agentic-workflow-analysis.pdf');
+            pdf.save('agentic-ai-business-case.pdf');
 
         } catch (error) {
             console.error('PDF export error:', error);
@@ -143,26 +207,53 @@ const ExportTools = ({ pricePerThousand }) => {
     };
 
     const exportToCSV = () => {
-        const monolithicCost = calculateCost(monolithicTokens, pricePerThousand);
-        const agenticCost = calculateCost(agenticTotalTokens, pricePerThousand);
-        const savings = calculateSavings(monolithicCost, agenticCost);
-
-        // Build CSV content
+        // Build CSV content with advanced financial parameters
         const csvContent = [
-            ['Agentic Workflow Analysis Report'],
+            ['Agentic AI Business Case Analysis Report'],
             [`Generated: ${new Date().toLocaleString()}`],
             [],
-            ['Metric', 'Monolithic', 'Agentic', 'Savings'],
-            ['Tokens per Request', monolithicTokens, agenticTotalTokens, monolithicTokens - agenticTotalTokens],
-            ['Cost per Request', monolithicCost.toFixed(4), agenticCost.toFixed(4), savings.amount.toFixed(4)],
-            ['Reduction %', '', '', savings.percentage.toFixed(1) + '%'],
+            ['Core Modeling Parameters & Assumptions'],
+            ['Parameter', 'Value', 'Unit'],
+            ['Monthly Requests', monthlyRequests, 'requests/month'],
+            ['Token Price per 1,000 Tokens (Base)', pricePerThousand, 'USD'],
+            ['Cache Hit Rate', cacheHitRate, 'Percentage'],
+            ['Frontier Model Mix Ratio', frontierMix, 'Percentage'],
+            ['Negotiated Contract Discount', contractDiscount, 'Percentage'],
+            ['Auditor Hourly Labor Rate', laborRate, 'USD/Hour'],
+            ['Time Spent per Error', auditTime, 'Minutes'],
+            ['Monolithic Error Rate', monoError, 'Percentage'],
+            ['Agentic Error Rate', agenticError, 'Percentage'],
+            ['One-off Setup CapEx Cost', implCost, 'USD'],
+            ['Annual Maintenance OpEx Rate', maintenancePercent, 'Percentage'],
+            ['Monthly Maintenance OpEx Cost', monthlyMaintenanceOpEx, 'USD'],
             [],
-            ['Monthly Projections (Price per 1K tokens: $' + pricePerThousand + ')'],
-            ['Tokens/Month', 'Monolithic Cost', 'Agentic Cost', 'Monthly Savings'],
-            ['1,000,000', (monolithicCost * 1000000 / agenticTotalTokens).toFixed(2), '2.00', ((monolithicCost * 1000000 / agenticTotalTokens) - 2).toFixed(2)],
-            ['10,000,000', (monolithicCost * 10000000 / agenticTotalTokens).toFixed(2), '20.00', ((monolithicCost * 10000000 / agenticTotalTokens) - 20).toFixed(2)],
-            ['100,000,000', (monolithicCost * 100000000 / agenticTotalTokens).toFixed(2), '200.00', ((monolithicCost * 100000000 / agenticTotalTokens) - 200).toFixed(2)],
-        ].map(row => row.join(',')).join('\n');
+            ['Cost Breakdown per Single Request'],
+            ['Approach', 'Token Cost', 'Labor Audit Cost', 'Maintenance Cost', 'Total Cost per Request'],
+            ['Monolithic Prompt', monolithicTokenCost.toFixed(6), monolithicLaborCost.toFixed(6), '0.000000', monolithicCostPerRequest.toFixed(6)],
+            ['Agentic Workflow', agenticTokenCost.toFixed(6), agenticLaborCost.toFixed(6), (monthlyMaintenanceOpEx / monthlyRequests).toFixed(6), (agenticCostPerRequest + monthlyMaintenanceOpEx / monthlyRequests).toFixed(6)],
+            [],
+            ['Financial ROI Metrics (Monthly / Annualized)'],
+            ['Metric', 'Monthly', 'Annualized'],
+            ['Direct Token Savings', monthlyTokenSavings.toFixed(2), (monthlyTokenSavings * 12).toFixed(2)],
+            ['Indirect Labor Savings', laborSavingsObj.monthlySavings.toFixed(2), (laborSavingsObj.monthlySavings * 12).toFixed(2)],
+            ['Ongoing Maintenance OpEx', (-monthlyMaintenanceOpEx).toFixed(2), (-monthlyMaintenanceOpEx * 12).toFixed(2)],
+            ['Total Net Savings', totalMonthlyNetSavings.toFixed(2), totalAnnualNetSavings.toFixed(2)],
+            [],
+            ['Strategic Executive Metrics'],
+            ['Metric', 'Value'],
+            ['5-Year Net Present Value (NPV)', npv.toFixed(2)],
+            ['Payback Period (Months)', paybackPeriod === 999 ? 'N/A' : paybackPeriod],
+            ['Monthly Labor Hours Reclaimed', laborSavingsObj.hoursSaved.toFixed(1)],
+            ['Annual Labor Hours Reclaimed', (laborSavingsObj.hoursSaved * 12).toFixed(1)],
+            ['Errors Avoided per Month', laborSavingsObj.errorsAvoided]
+        ].map(row => row.map(cell => {
+            // Escape cells containing commas
+            const cellStr = String(cell);
+            if (cellStr.includes(',')) {
+                return `"${cellStr}"`;
+            }
+            return cellStr;
+        }).join(',')).join('\n');
 
         // Create and download
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -170,13 +261,37 @@ const ExportTools = ({ pricePerThousand }) => {
         const url = URL.createObjectURL(blob);
 
         link.setAttribute('href', url);
-        link.setAttribute('download', 'agentic-workflow-analysis.csv');
+        link.setAttribute('download', 'agentic-ai-business-case.csv');
         link.style.visibility = 'hidden';
 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
+
+    if (compact) {
+        return (
+            <div className="flex gap-sm justify-center items-center" style={{ flexWrap: 'wrap', margin: 0 }}>
+                <button
+                    className="btn btn-primary"
+                    onClick={exportToPDF}
+                    disabled={isExporting}
+                    style={{ padding: '0.45rem 1rem', fontSize: '0.8rem', gap: '0.35rem', borderRadius: 'var(--radius-sm)' }}
+                >
+                    <FileText size={14} />
+                    {isExporting ? 'Generating PDF...' : 'Download PDF Memo'}
+                </button>
+                <button
+                    className="btn btn-secondary"
+                    onClick={exportToCSV}
+                    style={{ padding: '0.45rem 1rem', fontSize: '0.8rem', gap: '0.35rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-card)' }}
+                >
+                    <Table size={14} style={{ color: 'var(--accent-success)' }} />
+                    Download CSV Model
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="card animate-fadeIn">
@@ -185,7 +300,7 @@ const ExportTools = ({ pricePerThousand }) => {
                     <Download size={24} style={{ color: 'var(--accent-primary)' }} />
                     <div>
                         <h2>Export & Share</h2>
-                        <p>Download reports for presentations and stakeholders</p>
+                        <p>Download reports for stakeholders, sponsors, and steering committees</p>
                     </div>
                 </div>
             </div>
@@ -201,11 +316,10 @@ const ExportTools = ({ pricePerThousand }) => {
                     }}>
                         <div className="flex items-center gap-sm mb-sm">
                             <FileText size={32} style={{ color: 'var(--accent-primary)' }} />
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: 0 }}>PDF Report</h3>
+                            <h3 style={{ fontSize: '1.25rem', marginBottom: 0 }}>PDF Executive Memo</h3>
                         </div>
                         <p style={{ fontSize: '0.875rem', marginBottom: 'var(--spacing-md)' }}>
-                            Generate a comprehensive PDF report with token analysis, cost comparisons, and projections.
-                            Perfect for stakeholder presentations.
+                            Generate a formal business case PDF detailing the direct LLM token savings, auditor labor hours reclaimed, NPV, and payback period.
                         </p>
                         <button
                             className="btn btn-primary"
@@ -214,7 +328,7 @@ const ExportTools = ({ pricePerThousand }) => {
                             style={{ width: '100%' }}
                         >
                             <FileText size={18} />
-                            {isExporting ? 'Generating PDF...' : 'Export to PDF'}
+                            {isExporting ? 'Generating Memo...' : 'Export to PDF'}
                         </button>
                     </div>
 
@@ -227,11 +341,10 @@ const ExportTools = ({ pricePerThousand }) => {
                     }}>
                         <div className="flex items-center gap-sm mb-sm">
                             <Table size={32} style={{ color: 'var(--accent-success)' }} />
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: 0 }}>CSV Data</h3>
+                            <h3 style={{ fontSize: '1.25rem', marginBottom: 0 }}>CSV Financial Model</h3>
                         </div>
                         <p style={{ fontSize: '0.875rem', marginBottom: 'var(--spacing-md)' }}>
-                            Export raw data in CSV format for further analysis in Excel, Google Sheets, or other tools.
-                            Includes all metrics and projections.
+                            Export raw variables and savings projections in CSV format to be reviewed in Microsoft Excel or imported into standard consulting models.
                         </p>
                         <button
                             className="btn btn-primary"
@@ -253,14 +366,14 @@ const ExportTools = ({ pricePerThousand }) => {
                     borderRadius: 'var(--radius-md)'
                 }}>
                     <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                        📊 What's Included in Exports
+                        📊 What is included in the Consulting Exports:
                     </p>
                     <ul style={{ fontSize: '0.875rem', marginLeft: '1.5rem', marginBottom: 0 }}>
-                        <li>Executive summary of token optimization</li>
-                        <li>Detailed token usage comparison</li>
-                        <li>Cost analysis with current pricing (${pricePerThousand}/1K tokens)</li>
-                        <li>Monthly projections at multiple scales</li>
-                        <li>Recommendations for implementation</li>
+                        <li>Key strategic assumptions: Transaction volumes, model pricing, labor rates</li>
+                        <li>Direct token cost compression metrics</li>
+                        <li>Indirect human review time capacity savings calculations</li>
+                        <li>Discounted 5-Year NPV and Setup Cost payback period projections</li>
+                        <li>High-level partner implementation guidelines</li>
                     </ul>
                 </div>
             </div>
